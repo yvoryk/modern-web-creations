@@ -54,4 +54,4 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 ## Author
 
-**Yaroslav Voryk** - [GitHub](https://github.com/yvoryk)
+**Yaroslav Voryk** - [GitHub Profile](https://github.com/yvoryk)
