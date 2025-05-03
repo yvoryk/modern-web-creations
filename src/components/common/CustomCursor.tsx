@@ -84,7 +84,7 @@ const CustomCursor: React.FC<CursorProps> = ({
     const detectTouchDevice = () => {
       // Quick desktop detection for early return
       if (window.innerWidth > 1024 && !('ontouchstart' in window)) {
-        setIsTouchDevice(false);
+      setIsTouchDevice(false);
         document.body.classList.add('custom-cursor');
         document.documentElement.style.setProperty('--cursor-visibility', 'none');
         return;
@@ -147,7 +147,7 @@ const CustomCursor: React.FC<CursorProps> = ({
         document.head.removeChild(mobileCursorStyle);
       }
     };
-  }, [enableOnMobile]);
+  }, [enableOnMobile, isTouchDevice]);
   
   // Only set up mouse events on non-touch devices with optimized event handling
   useEffect(() => {

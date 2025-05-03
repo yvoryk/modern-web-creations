@@ -9,22 +9,22 @@ import './index.css';
 // Fix for Instagram in-app browser
 // This will force a small delay before rendering to prevent flickering
 const renderApp = () => {
-  const rootElement = document.getElementById('root');
-  if (!rootElement) {
-    throw new Error('Failed to find the root element');
-  }
-  
-  const root = ReactDOM.createRoot(rootElement);
-  
-  root.render(
-    <React.StrictMode>
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error('Failed to find the root element');
+}
+
+const root = ReactDOM.createRoot(rootElement);
+
+root.render(
+  <React.StrictMode>
       <Router>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
       </Router>
-    </React.StrictMode>
-  );
+  </React.StrictMode>
+);
 };
 
 // Check if running in Instagram browser and apply special handling

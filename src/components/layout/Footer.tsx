@@ -198,8 +198,9 @@ const Copyright = styled.div`
 const Footer: React.FC = () => {
   const navigate = useNavigate();
   
-  // Simplified click handler for mobile - no preventDefault to avoid conflicts
-  const handleMobileLinkClick = (path: string) => {
+  // Updated click handler for links to scroll to top first
+  const handleLinkClick = (path: string) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate(path);
   };
 
@@ -238,7 +239,10 @@ const Footer: React.FC = () => {
           <FooterLinkWrapper>
             <FooterLink 
               to="/" 
-              onClick={() => handleMobileLinkClick("/")}
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick("/");
+              }}
             >
               <LinkText className="link-text">Home</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -247,7 +251,10 @@ const Footer: React.FC = () => {
           <FooterLinkWrapper>
             <FooterLink 
               to="/services" 
-              onClick={() => handleMobileLinkClick("/services")}
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick("/services");
+              }}
             >
               <LinkText className="link-text">Services</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -255,17 +262,11 @@ const Footer: React.FC = () => {
           
           <FooterLinkWrapper>
             <FooterLink 
-              to="/portfolio" 
-              onClick={() => handleMobileLinkClick("/portfolio")}
-            >
-              <LinkText className="link-text">Portfolio</LinkText> <FontAwesomeIcon icon={faArrowRight} />
-            </FooterLink>
-          </FooterLinkWrapper>
-          
-          <FooterLinkWrapper>
-            <FooterLink 
               to="/about" 
-              onClick={() => handleMobileLinkClick("/about")}
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick("/about");
+              }}
             >
               <LinkText className="link-text">About Us</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -273,8 +274,23 @@ const Footer: React.FC = () => {
           
           <FooterLinkWrapper>
             <FooterLink 
+              to="/portfolio" 
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick("/portfolio");
+              }}
+            >
+              <LinkText className="link-text">Portfolio</LinkText> <FontAwesomeIcon icon={faArrowRight} />
+            </FooterLink>
+          </FooterLinkWrapper>
+          
+          <FooterLinkWrapper>
+            <FooterLink 
               to="/contact" 
-              onClick={() => handleMobileLinkClick("/contact")}
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick("/contact");
+              }}
             >
               <LinkText className="link-text">Contact</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -287,7 +303,7 @@ const Footer: React.FC = () => {
           <FooterLinkWrapper>
             <FooterLink 
               to="/services" 
-              onClick={() => handleMobileLinkClick("/services")}
+              onClick={() => handleLinkClick("/services")}
             >
               <LinkText className="link-text">Website Design</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -296,7 +312,7 @@ const Footer: React.FC = () => {
           <FooterLinkWrapper>
             <FooterLink 
               to="/services" 
-              onClick={() => handleMobileLinkClick("/services")}
+              onClick={() => handleLinkClick("/services")}
             >
               <LinkText className="link-text">Website Development</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -305,7 +321,7 @@ const Footer: React.FC = () => {
           <FooterLinkWrapper>
             <FooterLink 
               to="/services" 
-              onClick={() => handleMobileLinkClick("/services")}
+              onClick={() => handleLinkClick("/services")}
             >
               <LinkText className="link-text">E-Commerce Solutions</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -314,7 +330,7 @@ const Footer: React.FC = () => {
           <FooterLinkWrapper>
             <FooterLink 
               to="/services" 
-              onClick={() => handleMobileLinkClick("/services")}
+              onClick={() => handleLinkClick("/services")}
             >
               <LinkText className="link-text">Website Redesign</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -323,7 +339,7 @@ const Footer: React.FC = () => {
           <FooterLinkWrapper>
             <FooterLink 
               to="/services" 
-              onClick={() => handleMobileLinkClick("/services")}
+              onClick={() => handleLinkClick("/services")}
             >
               <LinkText className="link-text">SEO Optimization</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>

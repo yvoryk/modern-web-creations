@@ -12,15 +12,18 @@ import {
   faMicrophone,
   faSpinner,
   faBrain,
-  faBolt
+  faBolt,
+  faImage
 } from '@fortawesome/free-solid-svg-icons';
 import { ThemeContext } from '../../context/ThemeContext';
+import { generateChatCompletion, generateImageWithDalle } from '../../services/openaiService';
 
 interface Message {
   id: string;
   text: string;
   sender: 'user' | 'bot';
   timestamp: Date;
+  isImage?: boolean;
 }
 
 interface ChatWidgetProps {
@@ -35,15 +38,6 @@ const initialMessages: Message[] = [
     sender: 'bot',
     timestamp: new Date()
   }
-];
-
-// Predefined responses for demo purposes
-const botResponses = [
-  "Thanks for your message! I'm Yaro, the AI assistant for Modern Web Creations. How can I assist you with your web development needs?",
-  "We specialize in responsive design, e-commerce solutions, and custom web applications. Would you like to learn more about any of these services?",
-  "Our team has over 10 years of experience in creating stunning websites. Would you like to see our portfolio?",
-  "I'd be happy to connect you with one of our specialists. Would you prefer to communicate via email or phone?",
-  "Great question! Modern Web Creations offers a range of services including web design, development, SEO optimization, and ongoing maintenance."
 ];
 
 // ChatWidget Container
@@ -257,7 +251,7 @@ const ContactButton = styled.button`
   font-size: 14px;
   transition: all 0.2s;
   
-  &:first-child {
+  &:nth-child(1) {
     background: ${({ theme }) => theme.secondary};
     color: ${({ theme }) => theme.textDark};
     
@@ -266,8 +260,17 @@ const ContactButton = styled.button`
     }
   }
   
-  &:last-child {
+  &:nth-child(2) {
     background: ${({ theme }) => theme.primary};
+    color: white;
+    
+    &:hover {
+      background: ${({ theme }) => theme.primaryHover};
+    }
+  }
+  
+  &:nth-child(3) {
+    background: ${({ theme }) => theme.accent || theme.primary};
     color: white;
     
     &:hover {
@@ -453,8 +456,9 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
+  const [isImageMode, setIsImageMode] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { isDarkMode } = useContext(ThemeContext);
+  useContext(ThemeContext);
 
   // Scroll to bottom of messages
   const scrollToBottom = () => {
@@ -474,8 +478,8 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
   };
 
   // Send message
-  const sendMessage = () => {
-    if (!newMessage.trim()) return;
+  const sendMessage = async () => {
+    if (!newMessage.trim() || isTyping) return;
 
     // Add user message
     const userMessage: Message = {
@@ -489,17 +493,80 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
     setNewMessage('');
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: botResponses[Math.floor(Math.random() * botResponses.length)],
-        sender: 'bot',
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, botMessage]);
+    try {
+      if (isImageMode) {
+        // Using OpenAI to generate image
+        const imagePrompt = `${newMessage}. Create a professional, modern web design style image.`;
+        
+        // Add loading message
+        const loadingMessage: Message = {
+          id: 'loading',
+          text: 'Generating image... This may take a moment.',
+          sender: 'bot',
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, loadingMessage]);
+        
+        // Generate image with DALL-E
+        const imageUrl = await generateImageWithDalle(imagePrompt);
+        
+        // Remove loading message and add image response
+        setMessages(prev => {
+          const filtered = prev.filter(msg => msg.id !== 'loading');
+          return [
+            ...filtered,
+            {
+              id: (Date.now() + 1).toString(),
+              text: `![Generated Image](${imageUrl})`,
+              sender: 'bot',
+              timestamp: new Date(),
+              isImage: true
+            }
+          ];
+        });
+        
+        // Switch back to chat mode
+        setIsImageMode(false);
+      } else {
+        // Using OpenAI for chat completion
+        const response = await generateChatCompletion([
+          { 
+            role: 'system', 
+            content: 'You are Yaro, an AI assistant for Modern Web Creations, a web development agency. Be helpful, concise, and professional.' 
+          },
+          ...messages.map(msg => ({
+            role: msg.sender === 'user' ? 'user' as const : 'assistant' as const,
+            content: msg.text
+          })),
+          { role: 'user', content: newMessage }
+        ]);
+        
+        // Add AI response
+        setMessages(prev => [
+          ...prev,
+          {
+            id: (Date.now() + 1).toString(),
+            text: response,
+            sender: 'bot',
+            timestamp: new Date()
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error in AI response:', error);
+      setMessages(prev => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          text: 'Sorry, I encountered an error. Please try again later.',
+          sender: 'bot',
+          timestamp: new Date()
+        }
+      ]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   // Handle key press (Enter to send)
@@ -522,6 +589,46 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
   // Handle text contact
   const handleTextContact = () => {
     window.location.href = `sms:${ownerPhone}?body=Hello, I'm contacting from your website after chatting with Yaro.`;
+  };
+  
+  // Toggle image mode
+  const toggleImageMode = () => {
+    setIsImageMode(!isImageMode);
+    if (!isImageMode) {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          text: 'Image generation mode activated. Describe the image you want me to create.',
+          sender: 'bot',
+          timestamp: new Date()
+        }
+      ]);
+    } else {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          text: 'Chat mode restored. How can I help you?',
+          sender: 'bot',
+          timestamp: new Date()
+        }
+      ]);
+    }
+  };
+
+  // Function to render message content (handles both text and images)
+  const renderMessageContent = (message: Message) => {
+    // Check if content contains image URL
+    const imageMatch = message.text.match(/!\[.*?\]\((.*?)\)/);
+    if (message.isImage && imageMatch && imageMatch[1]) {
+      return (
+        <MessageImage src={imageMatch[1]} alt="AI Generated" loading="lazy" />
+      );
+    }
+    
+    // Regular text message
+    return message.text;
   };
   
   // Custom Yaro Logo
@@ -582,6 +689,10 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
                     <FontAwesomeIcon icon={faTimes} />
                     Clear conversation
                   </OptionItem>
+                  <OptionItem onClick={toggleImageMode}>
+                    <FontAwesomeIcon icon={faImage} />
+                    {isImageMode ? 'Switch to Chat' : 'Generate Image'}
+                  </OptionItem>
                   <OptionItem onClick={handleEmailContact}>
                     <FontAwesomeIcon icon={faEnvelope} />
                     Email us directly
@@ -597,7 +708,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
             <ChatMessages>
               {messages.map(message => (
                 <MessageBubble key={message.id} sender={message.sender}>
-                  {message.text}
+                  {renderMessageContent(message)}
                   <Timestamp>{formatTime(message.timestamp)}</Timestamp>
                 </MessageBubble>
               ))}
@@ -618,11 +729,15 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
                 <FontAwesomeIcon icon={faMobile} />
                 Text Us
               </ContactButton>
+              <ContactButton onClick={toggleImageMode}>
+                <FontAwesomeIcon icon={faImage} />
+                {isImageMode ? 'Chat' : 'Image'}
+              </ContactButton>
             </ContactOptions>
 
             <ChatInput>
               <MessageInput
-                placeholder="Ask Yaro anything..."
+                placeholder={isImageMode ? "Describe the image you want..." : "Ask Yaro anything..."}
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
@@ -647,18 +762,18 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         whileHover="hover"
         whileTap="tap"
         variants={buttonVariants}
-        initial={{ scale: 0, rotate: 180 }}
-        animate={{ scale: 1, rotate: 0 }}
-        transition={{ type: "spring", stiffness: 500, damping: 30 }}
       >
-        {isOpen ? (
-          <FontAwesomeIcon icon={faTimes} />
-        ) : (
-          <YaroLogo />
-        )}
+        <FontAwesomeIcon icon={faRobot} />
       </ChatButton>
     </WidgetContainer>
   );
 };
+
+// Add styled component for images
+const MessageImage = styled.img`
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 5px;
+`;
 
 export default ChatWidget; 

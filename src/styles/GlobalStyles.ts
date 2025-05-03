@@ -265,8 +265,8 @@ const GlobalStyles = createGlobalStyle`
     
     @media (prefers-reduced-motion: reduce) {
       animation: none;
-    }
-    
+  }
+  
     @media (max-width: 768px) {
       animation-duration: 3s; /* Slower on mobile to reduce CPU usage */
       animation-play-state: paused; /* Only animate when visible */
@@ -284,8 +284,8 @@ const GlobalStyles = createGlobalStyle`
     @media (prefers-reduced-motion: reduce) {
       animation: none;
       background-position: 0% 50%;
-    }
-    
+  }
+  
     @media (max-width: 768px) {
       animation-duration: 8s; /* Slower on mobile */
       background-size: 150% auto; /* Smaller gradient range to reduce GPU usage */
@@ -393,8 +393,8 @@ const GlobalStyles = createGlobalStyle`
     .fade-in, .slide-up, .slide-left, .slide-right {
       animation-duration: 0.2s !important;
       animation-timing-function: ease-out !important;
-    }
-    
+  }
+  
     /* Disable gradient animations completely */
     .gradient-text, .gradient-text-blue, .gradient-text-purple, 
     .gradient-text-rainbow, .gradient-text-sunset, .gradient-text-neon,

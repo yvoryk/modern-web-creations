@@ -630,6 +630,7 @@ const Header: React.FC = () => {
                       toggleMenu();
                       // Use setTimeout to ensure the menu closes first before navigation
                       setTimeout(() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
                         navigate(item.path);
                       }, 100);
                     }}

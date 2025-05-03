@@ -59,13 +59,13 @@ const GlobalStyle = createGlobalStyle`
     /* apply to all elements only when custom cursor is enabled */
     * {
       cursor: none !important;
-    }
-    
+  }
+
     /* Special cursor handling for interactive elements */
-    a, button, input[type="submit"], input[type="button"], 
-    select, [role="button"], .clickable, 
-    input, textarea, label, [tabindex], [onclick] {
-      cursor: none !important;
+  a, button, input[type="submit"], input[type="button"], 
+  select, [role="button"], .clickable, 
+  input, textarea, label, [tabindex], [onclick] {
+    cursor: none !important;
     }
   }
 
