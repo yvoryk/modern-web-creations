@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled, { css, keyframes } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -442,6 +442,7 @@ const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { isDarkMode } = useContext(ThemeContext);
   
   // Use the media query hook to check for mobile view
@@ -591,11 +592,10 @@ const Header: React.FC = () => {
                     to={item.path} 
                     $isActive={location.pathname === item.path} 
                     style={{ touchAction: 'manipulation' }}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
                       toggleMenu();
-                      setTimeout(() => {
-                        window.location.href = item.path;
-                      }, 10);
+                      navigate(item.path);
                     }}
                   >
                     {item.label}

@@ -185,22 +185,62 @@ const GlobalStyles = createGlobalStyle`
   /* Animation utility classes */
   .fade-in {
     animation: fadeIn 0.5s ease-in-out;
+    
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+    
+    @media (max-width: 768px) {
+      animation-duration: 0.3s; /* Faster on mobile */
+    }
   }
   
   .slide-up {
     animation: slideInUp 0.6s ease-out;
+    
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+    
+    @media (max-width: 768px) {
+      animation-duration: 0.4s; /* Faster on mobile */
+    }
   }
   
   .slide-left {
     animation: slideInLeft 0.6s ease-out;
+    
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+    
+    @media (max-width: 768px) {
+      animation-duration: 0.4s; /* Faster on mobile */
+    }
   }
   
   .slide-right {
     animation: slideInRight 0.6s ease-out;
+    
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+    
+    @media (max-width: 768px) {
+      animation-duration: 0.4s; /* Faster on mobile */
+    }
   }
   
   .pulse {
     animation: pulse 2s ease-in-out infinite;
+    
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+    
+    @media (max-width: 768px) {
+      animation-duration: 3s; /* Slower on mobile to reduce CPU usage */
+    }
   }
   
   /* Typography utility classes */
@@ -258,6 +298,15 @@ const GlobalStyles = createGlobalStyle`
     -webkit-text-fill-color: transparent;
     background-size: 200% auto;
     animation: gradientAnimation 5s ease infinite;
+    
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      background-position: 0% 50%;
+    }
+    
+    @media (max-width: 768px) {
+      animation-duration: 8s; /* Slower on mobile */
+    }
   }
   
   .gradient-text-blue {
