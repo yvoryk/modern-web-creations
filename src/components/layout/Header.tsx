@@ -193,6 +193,11 @@ const NavRipple = styled(motion.div)`
   background: rgba(0, 149, 255, 0.15);
   pointer-events: none;
   z-index: 0;
+  will-change: transform, opacity;
+  
+  @media (max-width: 768px) {
+    display: none; /* Don't show ripple effect on mobile */
+  }
 `;
 
 const NavLink = styled(Link)<{ isActive?: boolean }>`
@@ -472,12 +477,26 @@ const Header: React.FC = () => {
   // Prevent scrolling when mobile menu is open
   useEffect(() => {
     if (isOpen && isMobile) {
-      document.body.style.overflow = 'hidden';
+      // Store the current scroll position
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = `-${scrollY}px`;
     } else {
-      document.body.style.overflow = '';
+      // Restore scroll position when menu closes
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
+      }
     }
     
     return () => {
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
       document.body.style.overflow = '';
     };
   }, [isOpen, isMobile]);
@@ -500,6 +519,19 @@ const Header: React.FC = () => {
   
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   
+  // Only trigger hover effects on non-mobile devices
+  const handleHoverStart = (path: string) => {
+    if (!isMobile) {
+      setHoveredItem(path);
+    }
+  };
+  
+  const handleHoverEnd = () => {
+    if (!isMobile) {
+      setHoveredItem(null);
+    }
+  };
+  
   return (
     <>
       <SkipToContent href="#main-content">Skip to content</SkipToContent>
@@ -521,19 +553,20 @@ const Header: React.FC = () => {
               {navItems.map((item) => (
                 <NavItem 
                   key={item.path}
-                  onHoverStart={() => setHoveredItem(item.path)}
-                  onHoverEnd={() => setHoveredItem(null)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.97 }}
+                  onHoverStart={() => handleHoverStart(item.path)}
+                  onHoverEnd={handleHoverEnd}
+                  whileHover={!isMobile ? { scale: 1.05 } : undefined}
+                  whileTap={!isMobile ? { scale: 0.97 } : undefined}
                   transition={{ 
                     type: "spring", 
                     stiffness: 300, 
-                    damping: 20 
+                    damping: 20,
+                    mass: 0.8
                   }}
                 >
                   <NavLinkContainer>
                     <AnimatePresence>
-                      {hoveredItem === item.path && (
+                      {hoveredItem === item.path && !isMobile && (
                         <NavRipple
                           initial={{ scale: 0, opacity: 0 }}
                           animate={{ scale: 1, opacity: 1 }}
@@ -595,7 +628,10 @@ const Header: React.FC = () => {
                     onClick={(e) => {
                       e.preventDefault();
                       toggleMenu();
-                      navigate(item.path);
+                      // Use setTimeout to ensure the menu closes first before navigation
+                      setTimeout(() => {
+                        navigate(item.path);
+                      }, 100);
                     }}
                   >
                     {item.label}

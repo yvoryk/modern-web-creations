@@ -31,7 +31,7 @@ const CursorDot = styled(motion.div)<{ color: string; size: number }>`
   mix-blend-mode: difference;
   pointer-events: none;
   z-index: 9999;
-  will-change: transform, width, height;
+  will-change: transform;
 `;
 
 const CursorRing = styled(motion.div)<{ color: string; size: number }>`
@@ -45,7 +45,7 @@ const CursorRing = styled(motion.div)<{ color: string; size: number }>`
   mix-blend-mode: difference;
   pointer-events: none;
   z-index: 9998;
-  will-change: transform, width, height;
+  will-change: transform;
 `;
 
 const CustomCursor: React.FC<CursorProps> = ({ 
@@ -53,16 +53,16 @@ const CustomCursor: React.FC<CursorProps> = ({
   size = 8,
   enableOnMobile = false
 }) => {
-  // State for cursor positions
+  // Use refs to minimize renders
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
   
-  // For smoother animation on the cursor ring
-  const springConfig = { damping: 25, stiffness: 300 };
+  // Optimize spring physics for better performance
+  const springConfig = { damping: 25, stiffness: 300, mass: 0.8 };
   const ringX = useSpring(mouseX, springConfig);
   const ringY = useSpring(mouseY, springConfig);
   
-  // Use dotX and dotY directly from mouseX and mouseY for responsive cursor dot
+  // Direct mapping for dot (no spring physics) for better performance
   const dotX = mouseX;
   const dotY = mouseY;
   
@@ -77,13 +77,23 @@ const CustomCursor: React.FC<CursorProps> = ({
   
   // Theme context for dynamic theming
   const theme = useContext(ThemeContext) || { primary: '#0095ff' };
-
+  
+  // Memoize the touch device detection to run only once on mount
   useEffect(() => {
     // Very thorough touch device detection
     const detectTouchDevice = () => {
+      // Quick desktop detection for early return
+      if (window.innerWidth > 1024 && !('ontouchstart' in window)) {
+        setIsTouchDevice(false);
+        document.body.classList.add('custom-cursor');
+        document.documentElement.style.setProperty('--cursor-visibility', 'none');
+        return;
+      }
+      
+      // Only do complex detection if needed
       const touchCapable = 'ontouchstart' in window || 
-                            navigator.maxTouchPoints > 0 || 
-                            (navigator as any).msMaxTouchPoints > 0;
+                           navigator.maxTouchPoints > 0 || 
+                           (navigator as any).msMaxTouchPoints > 0;
       
       const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i;
       const mobileUserAgent = mobileRegex.test(navigator.userAgent);
@@ -110,10 +120,10 @@ const CustomCursor: React.FC<CursorProps> = ({
     // Run detection immediately
     detectTouchDevice();
     
-    // Re-check on resize and orientation change
-    window.addEventListener('resize', detectTouchDevice);
-    window.addEventListener('orientationchange', detectTouchDevice);
-      
+    // Only re-check on significant layout changes
+    const resizeObserver = new ResizeObserver(detectTouchDevice);
+    resizeObserver.observe(document.body);
+    
     // Create style element for cursor fixes
     const mobileCursorStyle = document.createElement('style');
     if (isTouchDevice && !enableOnMobile) {
@@ -131,45 +141,59 @@ const CustomCursor: React.FC<CursorProps> = ({
     }
     
     return () => {
-      window.removeEventListener('resize', detectTouchDevice);
-      window.removeEventListener('orientationchange', detectTouchDevice);
+      resizeObserver.disconnect();
       
       if (mobileCursorStyle && document.head.contains(mobileCursorStyle)) {
         document.head.removeChild(mobileCursorStyle);
       }
     };
-  }, [enableOnMobile, isTouchDevice]);
+  }, [enableOnMobile]);
   
-  // Only set up mouse events on non-touch devices
+  // Only set up mouse events on non-touch devices with optimized event handling
   useEffect(() => {
     if (isTouchDevice && !enableOnMobile) return;
     
+    // Throttle mouse movement updates
+    let animationFrameId: number | null = null;
+    let lastX = 0;
+    let lastY = 0;
+    
     const mouseMove = (e: MouseEvent) => {
-      // Use requestAnimationFrame for better performance
-      requestAnimationFrame(() => {
-        mouseX.set(e.clientX);
-        mouseY.set(e.clientY);
-      });
+      lastX = e.clientX;
+      lastY = e.clientY;
+      
+      if (!animationFrameId) {
+        animationFrameId = requestAnimationFrame(() => {
+          mouseX.set(lastX);
+          mouseY.set(lastY);
+          animationFrameId = null;
+        });
+      }
     };
     
-    // Function to handle mouseover events on hoverable elements
+    // Debounce hover state changes with a timeout
+    let hoverTimeout: NodeJS.Timeout | null = null;
+    
     const mouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+      }
+      
       // Check for hoverable elements
-      if (
+      const isHoverable = 
         target.tagName.toLowerCase() === 'a' || 
         target.tagName.toLowerCase() === 'button' ||
         target.tagName.toLowerCase() === 'input' ||
         target.classList.contains('hoverable') ||
         target.closest('a') || 
         target.closest('button') ||
-        target.closest('.hoverable')
-      ) {
-        setCursorVariant('hover');
-      } else {
-        setCursorVariant('default');
-      }
+        target.closest('.hoverable');
+      
+      hoverTimeout = setTimeout(() => {
+        setCursorVariant(isHoverable ? 'hover' : 'default');
+      }, 20);
     };
     
     // Set up listeners for cursor movement
@@ -179,6 +203,14 @@ const CustomCursor: React.FC<CursorProps> = ({
     return () => {
       window.removeEventListener('mousemove', mouseMove);
       window.removeEventListener('mouseover', mouseOver);
+      
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+      }
     };
   }, [mouseX, mouseY, isTouchDevice, enableOnMobile]);
   
@@ -187,7 +219,7 @@ const CustomCursor: React.FC<CursorProps> = ({
     return null;
   }
   
-  // Define variants for cursor animations
+  // Simplified variants with less complex transitions
   const dotVariants = {
     default: {
       width: size,
@@ -195,17 +227,18 @@ const CustomCursor: React.FC<CursorProps> = ({
       transition: {
         type: 'spring',
         damping: 20,
-        stiffness: 300
+        stiffness: 300,
+        mass: 0.6
       }
     },
     hover: {
-      width: size * 5,
-      height: size * 5,
+      width: size * 4,
+      height: size * 4,
       transition: {
         type: 'spring',
         damping: 20,
         stiffness: 300,
-        ease: [0.23, 1, 0.32, 1]
+        mass: 0.6
       }
     }
   };
@@ -218,17 +251,19 @@ const CustomCursor: React.FC<CursorProps> = ({
       transition: {
         type: 'spring',
         damping: 20,
-        stiffness: 300
+        stiffness: 300,
+        mass: 0.6
       }
     },
     hover: {
-      width: size * 5,
-      height: size * 5,
+      width: size * 4,
+      height: size * 4,
       opacity: 0.4,
       transition: {
         type: 'spring',
         damping: 20,
-        stiffness: 300
+        stiffness: 300,
+        mass: 0.6
       }
     }
   };

@@ -7,6 +7,7 @@ const GlobalStyles = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap');
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
+  /* Optimize viewport height for mobile */
   :root {
     /* Gradient CSS Variables */
     --gradient-blue: linear-gradient(135deg, #0075FF 0%, #00AAFF 50%, #4A9EFF 100%);
@@ -30,6 +31,9 @@ const GlobalStyles = createGlobalStyle`
     --font-secondary: 'Poppins', sans-serif;
     --font-accent: 'Raleway', sans-serif;
     --font-modern: 'Space Grotesk', sans-serif;
+    
+    /* Fix for mobile 100vh issue */
+    --vh: 1vh;
   }
 
   * {
@@ -45,11 +49,31 @@ const GlobalStyles = createGlobalStyle`
     line-height: 1.5;
     font-size: 16px;
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    touch-action: manipulation; /* Improve touch responsiveness */
+    
+    /* Mobile optimization for momentum scrolling */
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+    
+    /* Prevent pull-to-refresh on mobile */
+    overscroll-behavior-y: contain;
+    
+    /* Prevent text size adjustments */
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  /* Fix for 100vh issues on mobile */
+  .full-height {
+    height: 100vh; /* Fallback */
+    height: calc(var(--vh, 1vh) * 100);
   }
   
   a {
     text-decoration: none;
     color: inherit;
+    touch-action: manipulation; /* Improve touch responsiveness */
   }
   
   ul, ol {
@@ -59,11 +83,20 @@ const GlobalStyles = createGlobalStyle`
   img {
     max-width: 100%;
     height: auto;
+    display: block; /* Prevent layout shifts */
+    
+    /* Prevent dragging on mobile */
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
   }
   
   button, input, textarea, select {
     font-family: inherit;
     font-size: inherit;
+    touch-action: manipulation; /* Improve touch responsiveness */
   }
   
   h1 {
@@ -107,7 +140,7 @@ const GlobalStyles = createGlobalStyle`
   @keyframes slideInUp {
     from {
       opacity: 0;
-      transform: translateY(50px);
+      transform: translateY(30px);
     }
     to {
       opacity: 1;
@@ -118,7 +151,7 @@ const GlobalStyles = createGlobalStyle`
   @keyframes slideInLeft {
     from {
       opacity: 0;
-      transform: translateX(-50px);
+      transform: translateX(-30px);
     }
     to {
       opacity: 1;
@@ -129,7 +162,7 @@ const GlobalStyles = createGlobalStyle`
   @keyframes slideInRight {
     from {
       opacity: 0;
-      transform: translateX(50px);
+      transform: translateX(30px);
     }
     to {
       opacity: 1;
@@ -142,7 +175,7 @@ const GlobalStyles = createGlobalStyle`
       transform: scale(1);
     }
     50% {
-      transform: scale(1.05);
+      transform: scale(1.03);
     }
     100% {
       transform: scale(1);
@@ -170,19 +203,7 @@ const GlobalStyles = createGlobalStyle`
     }
   }
   
-  @keyframes textShadowPulse {
-    0% {
-      text-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
-    }
-    50% {
-      text-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
-    }
-    100% {
-      text-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
-    }
-  }
-  
-  /* Animation utility classes */
+  /* Animation utility classes with performance optimizations */
   .fade-in {
     animation: fadeIn 0.5s ease-in-out;
     
@@ -192,6 +213,8 @@ const GlobalStyles = createGlobalStyle`
     
     @media (max-width: 768px) {
       animation-duration: 0.3s; /* Faster on mobile */
+      will-change: opacity;
+      animation-fill-mode: backwards; /* Prevent initial flash */
     }
   }
   
@@ -204,6 +227,8 @@ const GlobalStyles = createGlobalStyle`
     
     @media (max-width: 768px) {
       animation-duration: 0.4s; /* Faster on mobile */
+      will-change: transform, opacity;
+      animation-fill-mode: backwards; /* Prevent initial flash */
     }
   }
   
@@ -216,6 +241,8 @@ const GlobalStyles = createGlobalStyle`
     
     @media (max-width: 768px) {
       animation-duration: 0.4s; /* Faster on mobile */
+      will-change: transform, opacity;
+      animation-fill-mode: backwards; /* Prevent initial flash */
     }
   }
   
@@ -228,6 +255,8 @@ const GlobalStyles = createGlobalStyle`
     
     @media (max-width: 768px) {
       animation-duration: 0.4s; /* Faster on mobile */
+      will-change: transform, opacity;
+      animation-fill-mode: backwards; /* Prevent initial flash */
     }
   }
   
@@ -240,58 +269,11 @@ const GlobalStyles = createGlobalStyle`
     
     @media (max-width: 768px) {
       animation-duration: 3s; /* Slower on mobile to reduce CPU usage */
+      animation-play-state: paused; /* Only animate when visible */
     }
   }
   
-  /* Typography utility classes */
-  .text-montserrat {
-    font-family: 'Montserrat', sans-serif;
-  }
-  
-  .text-poppins {
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  .text-raleway {
-    font-family: 'Raleway', sans-serif;
-  }
-  
-  .text-space {
-    font-family: 'Space Grotesk', sans-serif;
-  }
-  
-  .text-thin {
-    font-weight: 300;
-    letter-spacing: 0.02em;
-  }
-  
-  .text-bold {
-    font-weight: 700;
-  }
-  
-  .text-extrabold {
-    font-weight: 800;
-    letter-spacing: -0.02em;
-  }
-  
-  .text-shadow {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  }
-  
-  .text-shadow-glow {
-    animation: textShadowPulse 3s ease-in-out infinite;
-  }
-  
-  .text-uppercase {
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-  
-  .text-spaced {
-    letter-spacing: 0.1em;
-  }
-  
-  /* Gradient text utility classes */
+  /* Optimize gradient animations for mobile */
   .gradient-text {
     background-clip: text;
     -webkit-background-clip: text;
@@ -306,205 +288,95 @@ const GlobalStyles = createGlobalStyle`
     
     @media (max-width: 768px) {
       animation-duration: 8s; /* Slower on mobile */
+      background-size: 150% auto; /* Smaller gradient range to reduce GPU usage */
     }
   }
   
-  .gradient-text-blue {
-    background: var(--gradient-blue);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: 200% auto;
-    animation: gradientAnimation 5s ease infinite;
-  }
-  
-  .gradient-text-purple {
-    background: var(--gradient-purple);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: 200% auto;
-    animation: gradientAnimation 5s ease infinite;
-  }
-  
-  .gradient-text-rainbow {
-    background: var(--gradient-rainbow);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: 200% auto;
-    animation: gradientAnimation 5s ease infinite;
-  }
-  
-  .gradient-text-sunset {
-    background: var(--gradient-sunset);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: 200% auto;
-    animation: gradientAnimation 5s ease infinite;
-  }
-  
+  /* Apply optimizations to all gradient text variants */
+  .gradient-text-blue, 
+  .gradient-text-purple, 
+  .gradient-text-rainbow, 
+  .gradient-text-sunset, 
   .gradient-text-neon {
-    background: var(--gradient-neon);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-size: 200% auto;
-    animation: gradientAnimation 5s ease infinite, hue-rotate 15s linear infinite;
-  }
-  
-  /* Underline effects */
-  .fancy-underline {
-    position: relative;
-    display: inline-block;
-  }
-  
-  .fancy-underline::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: var(--gradient-blue);
-    background-size: 200% auto;
     animation: gradientAnimation 5s ease infinite;
-    border-radius: 3px;
-    transform: scaleX(0.6);
-    transform-origin: center;
-    transition: transform 0.3s ease;
+    
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      background-position: 0% 50%;
+    }
+    
+    @media (max-width: 768px) {
+      animation-duration: 8s; /* Slower on mobile */
+      background-size: 150% auto; /* Smaller gradient range to reduce GPU usage */
+    }
   }
   
-  .fancy-underline:hover::after {
-    transform: scaleX(1);
-  }
-  
-  /* Gradient background classes */
-  .gradient-bg-blue {
-    background: var(--gradient-blue);
+  /* Optimize gradient backgrounds for mobile */
+  .gradient-bg-blue,
+  .gradient-bg-yellow,
+  .gradient-bg-rainbow,
+  .gradient-bg-purple,
+  .gradient-bg-cyan,
+  .gradient-bg-sunset,
+  .gradient-bg-pastel,
+  .gradient-bg-ocean {
     background-size: 200% 200%;
     animation: gradientAnimation 8s ease infinite;
+    
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      background-position: 0% 50%;
+    }
+    
+    @media (max-width: 768px) {
+      animation-duration: 12s; /* Slower on mobile */
+      background-size: 150% 150%; /* Smaller gradient range to reduce GPU usage */
+    }
   }
   
-  .gradient-bg-yellow {
-    background: var(--gradient-yellow);
-    background-size: 200% 200%;
-    animation: gradientAnimation 8s ease infinite;
-  }
-  
-  .gradient-bg-rainbow {
-    background: var(--gradient-rainbow);
-    background-size: 200% 200%;
-    animation: gradientAnimation 8s ease infinite;
-  }
-  
-  .gradient-bg-purple {
-    background: var(--gradient-purple);
-    background-size: 200% 200%;
-    animation: gradientAnimation 8s ease infinite;
-  }
-  
-  .gradient-bg-cyan {
-    background: var(--gradient-cyan);
-    background-size: 200% 200%;
-    animation: gradientAnimation 8s ease infinite;
-  }
-  
-  .gradient-bg-sunset {
-    background: var(--gradient-sunset);
-    background-size: 200% 200%;
-    animation: gradientAnimation 8s ease infinite;
-  }
-  
+  /* Special handling for neon effects */
   .gradient-bg-neon {
-    background: var(--gradient-neon);
     background-size: 200% 200%;
     animation: gradientAnimation 8s ease infinite, hue-rotate 15s linear infinite;
-  }
-  
-  .gradient-bg-pastel {
-    background: var(--gradient-pastel);
-    background-size: 200% 200%;
-    animation: gradientAnimation 8s ease infinite;
-  }
-  
-  .gradient-bg-ocean {
-    background: var(--gradient-ocean);
-    background-size: 200% 200%;
-    animation: gradientAnimation 8s ease infinite;
-  }
-  
-  /* Border gradient utility classes */
-  .gradient-border {
-    position: relative;
     
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      padding: 2px;
-      background: var(--gradient-rainbow);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      animation: gradientAnimation 5s ease infinite;
-      pointer-events: none;
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      background-position: 0% 50%;
+    }
+    
+    @media (max-width: 768px) {
+      animation: gradientAnimation 12s ease infinite; /* Only one animation on mobile */
+      background-size: 150% 150%; /* Smaller gradient range */
     }
   }
   
+  /* Optimize border gradients for mobile */
+  .gradient-border,
   .gradient-border-blue {
-    position: relative;
-    
     &::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      padding: 2px;
-      background: var(--gradient-blue);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
       animation: gradientAnimation 5s ease infinite;
-      pointer-events: none;
+      
+      @media (prefers-reduced-motion: reduce) {
+        animation: none;
+        background-position: 0% 50%;
+      }
+      
+      @media (max-width: 768px) {
+        animation-duration: 8s; /* Slower on mobile */
+      }
     }
   }
   
-  /* Glass morphism utility class */
-  .glass {
-    background: rgba(255, 255, 255, 0.2);
+  /* Glass morphism utility class - optimize for mobile */
+  .glass, .dark-glass {
     backdrop-filter: blur(10px);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  /* Dark mode glass */
-  .dark-glass {
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-  }
-  
-  /* Gradient glow */
-  .gradient-glow {
-    position: relative;
-    z-index: 1;
     
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      border-radius: inherit;
-      background: inherit;
-      filter: blur(15px);
-      opacity: 0.7;
-      z-index: -1;
+    @media (max-width: 768px) {
+      backdrop-filter: blur(5px); /* Reduced blur for better performance */
     }
   }
 `;
