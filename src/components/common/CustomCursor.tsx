@@ -14,7 +14,7 @@ const ripple = keyframes`
   }
 `;
 
-// Water droplet pulsing animation - simplified
+// Water droplet pulsing animation
 const dropletPulse = keyframes`
   0% {
     transform: scale(1);
@@ -159,31 +159,33 @@ const CustomCursor: React.FC = () => {
   const [ripples, setRipples] = useState<Ripple[]>([]);
   const [splashes, setSplashes] = useState<Splash[]>([]);
   const [isVisible, setIsVisible] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(true); // Default to true to prevent flash of cursor on mobile
   const [lastPosition, setLastPosition] = useState({ x: 0, y: 0 });
 
-  // First check if it's a touch device - if so, don't enable the custom cursor
+  // Detect touch device - run this first and immediately
   useEffect(() => {
     const detectTouchDevice = () => {
-      return (
-        ('ontouchstart' in window) ||
-        (navigator.maxTouchPoints > 0) ||
-        ((navigator as any).msMaxTouchPoints > 0) ||
-        window.matchMedia('(pointer: coarse)').matches
+      const result = (
+        'ontouchstart' in window || 
+        navigator.maxTouchPoints > 0 || 
+        (navigator as any).msMaxTouchPoints > 0 || 
+        window.matchMedia('(pointer: coarse)').matches ||
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
       );
+      return result;
     };
     
-    // Check if mobile/touch device
-    setIsTouchDevice(detectTouchDevice());
+    const isMobile = detectTouchDevice();
+    setIsTouchDevice(isMobile);
     
-    // If we're on a touch device, remove the cursor: none CSS
-    if (detectTouchDevice()) {
+    // If mobile, make sure normal cursors are displayed
+    if (isMobile) {
       document.documentElement.style.setProperty('--cursor-visibility', 'auto');
       document.body.classList.remove('custom-cursor');
       
-      // Remove the !important cursor: none from body
-      const style = document.createElement('style');
-      style.innerHTML = `
+      const styleEl = document.createElement('style');
+      styleEl.id = 'mobile-cursor-fix';
+      styleEl.innerHTML = `
         body, body * {
           cursor: auto !important;
         }
@@ -192,22 +194,28 @@ const CustomCursor: React.FC = () => {
           cursor: pointer !important;
         }
       `;
-      document.head.appendChild(style);
       
-      return () => {
-        document.head.removeChild(style);
-      };
+      // Only append if not already present
+      if (!document.getElementById('mobile-cursor-fix')) {
+        document.head.appendChild(styleEl);
+      }
     } else {
-      // We're on a desktop, add the custom cursor class
+      // On desktop, add the custom cursor class
       document.body.classList.add('custom-cursor');
     }
+    
+    return () => {
+      const styleEl = document.getElementById('mobile-cursor-fix');
+      if (styleEl) {
+        document.head.removeChild(styleEl);
+      }
+    };
   }, []);
   
-  // Only set up the cursor if we're not on a touch device
+  // Only set up mouse events on desktop
   useEffect(() => {
     if (isTouchDevice) return;
     
-    // Show cursor only after it's moved
     const handleFirstMove = (e: MouseEvent) => {
       setIsVisible(true);
       window.removeEventListener('mousemove', handleFirstMove);
