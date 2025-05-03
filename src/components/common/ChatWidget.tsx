@@ -162,6 +162,11 @@ const HeaderTitle = styled.div`
     font-weight: 500;
     letter-spacing: 0.3px;
   }
+
+  span {
+    font-weight: 400;
+    opacity: 0.9;
+  }
 `;
 
 const HeaderIcon = styled.div`
@@ -660,7 +665,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
                   <YaroLogo />
                 </HeaderIcon>
                 <div>
-                  <h3>Yaro</h3>
+                  <h3>Yaro, <span>AI assistant</span></h3>
                   <small>{isTyping ? 'Thinking...' : 'Ready to help'}</small>
                 </div>
               </HeaderTitle>
@@ -762,8 +767,15 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         whileHover="hover"
         whileTap="tap"
         variants={buttonVariants}
+        initial={{ scale: 0, rotate: 180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ type: "spring", stiffness: 500, damping: 30 }}
       >
-        <FontAwesomeIcon icon={faRobot} />
+        {isOpen ? (
+          <FontAwesomeIcon icon={faTimes} />
+        ) : (
+          <YaroLogo />
+        )}
       </ChatButton>
     </WidgetContainer>
   );
