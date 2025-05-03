@@ -183,38 +183,38 @@ const Footer: React.FC = () => {
         
         <FooterColumn>
           <FooterHeading>Quick Links</FooterHeading>
-          <FooterLink to="/">
+          <FooterLink to="/" style={{ touchAction: 'manipulation' }}>
             Home <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/services" onClick={(e) => e.currentTarget.click()}>
+          <FooterLink to="/services" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/services'; }}>
             Services <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/portfolio" onClick={(e) => e.currentTarget.click()}>
+          <FooterLink to="/portfolio" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/portfolio'; }}>
             Portfolio <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/about" onClick={(e) => e.currentTarget.click()}>
+          <FooterLink to="/about" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/about'; }}>
             About Us <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/contact" onClick={(e) => e.currentTarget.click()}>
+          <FooterLink to="/contact" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/contact'; }}>
             Contact <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
         </FooterColumn>
         
         <FooterColumn>
           <FooterHeading>Services</FooterHeading>
-          <FooterLink to="/services" onClick={(e) => e.currentTarget.click()}>
+          <FooterLink to="/services" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/services'; }}>
             Website Design <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/services" onClick={(e) => e.currentTarget.click()}>
+          <FooterLink to="/services" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/services'; }}>
             Website Development <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/services" onClick={(e) => e.currentTarget.click()}>
+          <FooterLink to="/services" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/services'; }}>
             E-Commerce Solutions <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/services" onClick={(e) => e.currentTarget.click()}>
+          <FooterLink to="/services" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/services'; }}>
             Website Redesign <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/services" onClick={(e) => e.currentTarget.click()}>
+          <FooterLink to="/services" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/services'; }}>
             SEO Optimization <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
         </FooterColumn>

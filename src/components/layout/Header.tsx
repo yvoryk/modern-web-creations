@@ -590,7 +590,13 @@ const Header: React.FC = () => {
                     key={item.path}
                     to={item.path} 
                     $isActive={location.pathname === item.path} 
-                    onClick={toggleMenu}
+                    style={{ touchAction: 'manipulation' }}
+                    onClick={() => {
+                      toggleMenu();
+                      setTimeout(() => {
+                        window.location.href = item.path;
+                      }, 10);
+                    }}
                   >
                     {item.label}
                   </MobileNavLink>

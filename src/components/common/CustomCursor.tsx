@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import styled, { css, ThemeContext } from 'styled-components';
+import styled, { ThemeContext } from 'styled-components';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 interface CursorProps {
@@ -48,8 +48,6 @@ const CursorRing = styled(motion.div)<{ color: string; size: number }>`
   will-change: transform, width, height;
 `;
 
-const MobileStyleFix = styled.style``;
-
 const CustomCursor: React.FC<CursorProps> = ({ 
   color = '#ffffff', 
   size = 8,
@@ -81,31 +79,52 @@ const CustomCursor: React.FC<CursorProps> = ({
   const theme = useContext(ThemeContext) || { primary: '#0095ff' };
   
   useEffect(() => {
-    // More robust touch device detection
+    // Very thorough touch device detection
     const detectTouchDevice = () => {
-      // Check for touch capability
-      const isTouchCapable = 'ontouchstart' in window || 
+      const touchCapable = 'ontouchstart' in window || 
                             navigator.maxTouchPoints > 0 || 
                             (navigator as any).msMaxTouchPoints > 0;
       
-      // Check for mobile user agent
-      const isMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(navigator.userAgent);
+      const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i;
+      const mobileUserAgent = mobileRegex.test(navigator.userAgent);
       
-      setIsTouchDevice(isTouchCapable || isMobileUserAgent || window.innerWidth <= 768);
+      // Additional checks for small screen size and touch orientation
+      const smallScreen = window.innerWidth <= 768;
+      const mqlTouch = window.matchMedia('(hover: none), (pointer: coarse)');
+      
+      // If any of these are true, consider it a touch device
+      const isTouch = touchCapable || mobileUserAgent || smallScreen || mqlTouch.matches;
+      
+      setIsTouchDevice(isTouch);
+      
+      // Apply mobile styles immediately to prevent flashes
+      if (isTouch && !enableOnMobile) {
+        document.body.classList.remove('custom-cursor');
+        document.documentElement.style.setProperty('--cursor-visibility', 'auto');
+      } else {
+        document.body.classList.add('custom-cursor');
+        document.documentElement.style.setProperty('--cursor-visibility', 'none');
+      }
     };
     
-    // Call detection function
+    // Run detection immediately
     detectTouchDevice();
     
-    // Also check on resize to handle orientation changes
+    // Re-check on resize and orientation change
     window.addEventListener('resize', detectTouchDevice);
+    window.addEventListener('orientationchange', detectTouchDevice);
     
-    // Add stylesheet to fix mobile cursor
+    // Create style element for cursor fixes
     const mobileCursorStyle = document.createElement('style');
     if (isTouchDevice && !enableOnMobile) {
+      // Ensure normal cursor behavior on mobile
       mobileCursorStyle.innerHTML = `
         * {
           cursor: auto !important;
+        }
+        a, button, input[type="submit"], input[type="button"], 
+        select, [role="button"], .clickable {
+          cursor: pointer !important;
         }
       `;
       document.head.appendChild(mobileCursorStyle);
@@ -113,20 +132,24 @@ const CustomCursor: React.FC<CursorProps> = ({
     
     return () => {
       window.removeEventListener('resize', detectTouchDevice);
+      window.removeEventListener('orientationchange', detectTouchDevice);
+      
       if (mobileCursorStyle && document.head.contains(mobileCursorStyle)) {
         document.head.removeChild(mobileCursorStyle);
       }
     };
-  }, [enableOnMobile]);
+  }, [enableOnMobile, isTouchDevice]);
   
-  // Only setup mouse events on non-touch devices
+  // Only set up mouse events on non-touch devices
   useEffect(() => {
     if (isTouchDevice && !enableOnMobile) return;
     
     const mouseMove = (e: MouseEvent) => {
-      // Update cursor position using motion values
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
+      // Use requestAnimationFrame for better performance
+      requestAnimationFrame(() => {
+        mouseX.set(e.clientX);
+        mouseY.set(e.clientY);
+      });
     };
     
     // Function to handle mouseover events on hoverable elements
@@ -150,8 +173,8 @@ const CustomCursor: React.FC<CursorProps> = ({
     };
     
     // Set up listeners for cursor movement
-    window.addEventListener('mousemove', mouseMove);
-    window.addEventListener('mouseover', mouseOver);
+    window.addEventListener('mousemove', mouseMove, { passive: true });
+    window.addEventListener('mouseover', mouseOver, { passive: true });
     
     return () => {
       window.removeEventListener('mousemove', mouseMove);

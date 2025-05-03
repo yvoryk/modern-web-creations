@@ -125,6 +125,17 @@ const GradientOrb = styled.div`
   animation: ${pulse} 25s ease infinite alternate;
   will-change: transform, opacity;
   
+  /* Reduce animation load on mobile */
+  @media (max-width: 768px) {
+    opacity: 0.05;
+    animation-duration: 40s;
+  }
+  
+  /* Hide on low-powered devices */
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
+  }
+  
   &.orb-1 {
     top: 40%;
     right: 5%;
@@ -157,10 +168,49 @@ const BackgroundGradient = styled.div`
   animation: ${gradientMove} 60s linear infinite;
   z-index: -2;
   will-change: background-position;
+  
+  /* Slower animation on mobile */
+  @media (max-width: 768px) {
+    animation-duration: 90s;
+  }
+  
+  /* Static gradient on low-powered devices */
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background-position: 0% 50%;
+  }
 `;
 
 const App: React.FC = () => {
   useEffect(() => {
+    // Detect touch capability once at the beginning
+    const isTouchDevice = 'ontouchstart' in window || 
+                          navigator.maxTouchPoints > 0 || 
+                          (navigator as any).msMaxTouchPoints > 0 ||
+                          window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    
+    // Set viewport height variable for mobile browsers
+    const setVh = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+    
+    setVh();
+    window.addEventListener('resize', setVh);
+    window.addEventListener('orientationchange', setVh);
+    
+    // Fix for 300ms delay on mobile touch
+    let touchStyle: HTMLStyleElement | null = null;
+    if (isTouchDevice) {
+      touchStyle = document.createElement('style');
+      touchStyle.innerHTML = `
+        a, button, [role="button"], .clickable, input[type="submit"], input[type="button"] {
+          touch-action: manipulation;
+        }
+      `;
+      document.head.appendChild(touchStyle);
+    }
+    
     // Add smooth scrolling for anchor links
     const handleAnchorClick = (e: Event) => {
       e.preventDefault();
@@ -182,18 +232,26 @@ const App: React.FC = () => {
     const anchorLinks = document.querySelectorAll('a[href^="#"]');
     anchorLinks.forEach(anchor => {
       anchor.addEventListener('click', handleAnchorClick);
-    });
-
-    // Also handle touch events for better mobile response
-    anchorLinks.forEach(anchor => {
-      anchor.addEventListener('touchend', handleAnchorClick);
+      // Also handle touch events for better mobile response
+      if (isTouchDevice) {
+        anchor.addEventListener('touchend', handleAnchorClick);
+      }
     });
 
     return () => {
+      window.removeEventListener('resize', setVh);
+      window.removeEventListener('orientationchange', setVh);
+      
       anchorLinks.forEach(anchor => {
         anchor.removeEventListener('click', handleAnchorClick);
-        anchor.removeEventListener('touchend', handleAnchorClick);
+        if (isTouchDevice) {
+          anchor.removeEventListener('touchend', handleAnchorClick);
+        }
       });
+      
+      if (touchStyle && document.head.contains(touchStyle)) {
+        document.head.removeChild(touchStyle);
+      }
     };
   }, []);
 
