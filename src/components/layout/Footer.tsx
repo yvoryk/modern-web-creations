@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -196,25 +196,16 @@ const Copyright = styled.div`
 `;
 
 const Footer: React.FC = () => {
+  const navigate = useNavigate();
+  
   // Function to handle mobile link clicks that only activates when clicking on the text
   const handleMobileLinkClick = (
     e: React.MouseEvent | React.TouchEvent,
     path: string
   ) => {
-    // Check if the click event target is exactly the linkText or its children
-    const target = e.target as HTMLElement;
-    const isLinkTextClicked = 
-      target.classList.contains('link-text') || 
-      target.closest('.link-text');
-    
-    if (!isLinkTextClicked) {
-      // Prevent navigation if clicked outside the text
-      e.preventDefault();
-      return;
-    }
-    
-    // Otherwise, navigate to the path
-    window.location.href = path;
+    e.preventDefault(); // Prevent default Link behavior
+    // Navigate using React Router instead of window.location
+    navigate(path);
   };
 
   return (
@@ -254,7 +245,6 @@ const Footer: React.FC = () => {
             <FooterLink 
               to="/" 
               onClick={(e) => handleMobileLinkClick(e, "/")}
-              style={{ touchAction: 'manipulation' }}
             >
               <LinkText className="link-text">Home</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -265,7 +255,6 @@ const Footer: React.FC = () => {
             <FooterLink 
               to="/services" 
               onClick={(e) => handleMobileLinkClick(e, "/services")}
-              style={{ touchAction: 'manipulation' }}
             >
               <LinkText className="link-text">Services</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -276,7 +265,6 @@ const Footer: React.FC = () => {
             <FooterLink 
               to="/portfolio" 
               onClick={(e) => handleMobileLinkClick(e, "/portfolio")}
-              style={{ touchAction: 'manipulation' }}
             >
               <LinkText className="link-text">Portfolio</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -287,7 +275,6 @@ const Footer: React.FC = () => {
             <FooterLink 
               to="/about" 
               onClick={(e) => handleMobileLinkClick(e, "/about")}
-              style={{ touchAction: 'manipulation' }}
             >
               <LinkText className="link-text">About Us</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -298,7 +285,6 @@ const Footer: React.FC = () => {
             <FooterLink 
               to="/contact" 
               onClick={(e) => handleMobileLinkClick(e, "/contact")}
-              style={{ touchAction: 'manipulation' }}
             >
               <LinkText className="link-text">Contact</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -313,7 +299,6 @@ const Footer: React.FC = () => {
             <FooterLink 
               to="/services" 
               onClick={(e) => handleMobileLinkClick(e, "/services")}
-              style={{ touchAction: 'manipulation' }}
             >
               <LinkText className="link-text">Website Design</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -324,7 +309,6 @@ const Footer: React.FC = () => {
             <FooterLink 
               to="/services" 
               onClick={(e) => handleMobileLinkClick(e, "/services")}
-              style={{ touchAction: 'manipulation' }}
             >
               <LinkText className="link-text">Website Development</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -335,7 +319,6 @@ const Footer: React.FC = () => {
             <FooterLink 
               to="/services" 
               onClick={(e) => handleMobileLinkClick(e, "/services")}
-              style={{ touchAction: 'manipulation' }}
             >
               <LinkText className="link-text">E-Commerce Solutions</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -346,7 +329,6 @@ const Footer: React.FC = () => {
             <FooterLink 
               to="/services" 
               onClick={(e) => handleMobileLinkClick(e, "/services")}
-              style={{ touchAction: 'manipulation' }}
             >
               <LinkText className="link-text">Website Redesign</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -357,7 +339,6 @@ const Footer: React.FC = () => {
             <FooterLink 
               to="/services" 
               onClick={(e) => handleMobileLinkClick(e, "/services")}
-              style={{ touchAction: 'manipulation' }}
             >
               <LinkText className="link-text">SEO Optimization</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>

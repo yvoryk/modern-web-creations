@@ -6,7 +6,7 @@ interface CursorProps {
   color?: string;
   size?: number;
   enableOnMobile?: boolean;
-}
+  }
 
 const CursorWrapper = styled.div<{ isMobile: boolean }>`
   position: fixed;
@@ -113,7 +113,7 @@ const CustomCursor: React.FC<CursorProps> = ({
     // Re-check on resize and orientation change
     window.addEventListener('resize', detectTouchDevice);
     window.addEventListener('orientationchange', detectTouchDevice);
-    
+      
     // Create style element for cursor fixes
     const mobileCursorStyle = document.createElement('style');
     if (isTouchDevice && !enableOnMobile) {
@@ -206,7 +206,7 @@ const CustomCursor: React.FC<CursorProps> = ({
         damping: 20,
         stiffness: 300,
         ease: [0.23, 1, 0.32, 1]
-      }
+    }
     }
   };
   
@@ -241,14 +241,14 @@ const CustomCursor: React.FC<CursorProps> = ({
         style={{ x: dotX, y: dotY }}
         variants={dotVariants}
         animate={cursorVariant}
-      />
+          />
       <CursorRing
         color={color || theme.primary}
         size={size * 3}
         style={{ x: ringX, y: ringY }}
         variants={ringVariants}
         animate={cursorVariant}
-      />
+          />
     </CursorWrapper>
   );
 };
