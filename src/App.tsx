@@ -1,4 +1,4 @@
-import React, { useEffect, Suspense, lazy } from 'react';
+import React, { useEffect, Suspense, lazy, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
@@ -12,6 +12,9 @@ import {
   ScrollIndicator,
   ChatWidget 
 } from './components/common';
+import ChatAI from './components/common/ChatAI';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMessage } from '@fortawesome/free-solid-svg-icons';
 
 // Lazy load page components
 const HomePage = lazy(() => import('./pages/HomePage').then(module => ({ default: module.default })));
@@ -182,6 +185,8 @@ const BackgroundGradient = styled.div`
 `;
 
 const App: React.FC = () => {
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
   useEffect(() => {
     // Detect touch capability once at the beginning
     const isTouchDevice = 'ontouchstart' in window || 
@@ -320,8 +325,41 @@ const App: React.FC = () => {
         <BackToTop />
         <Footer />
       </AppContainer>
+      
+      {/* ChatAI Widget */}
+      <ChatAI isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+      
+      {/* Chat Button */}
+      <ChatButton onClick={() => setIsChatOpen(!isChatOpen)}>
+        <FontAwesomeIcon icon={faMessage} />
+      </ChatButton>
     </ThemeProvider>
   );
 };
+
+// Chat button styles
+const ChatButton = styled.button`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.gradientBlue};
+  color: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: transform 0.2s;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+`;
 
 export default App;
