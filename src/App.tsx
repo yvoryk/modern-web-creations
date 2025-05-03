@@ -90,10 +90,10 @@ const AppContainer = styled.div`
     height: 600px;
     border-radius: 50%;
     background: ${({ theme }) => theme.gradientBlue};
-    opacity: 0.25;
+    opacity: 0.15;
     filter: blur(120px);
     z-index: -1;
-    animation: ${gradientMove} 25s ease infinite;
+    animation: ${gradientMove} 40s ease infinite;
     will-change: transform;
   }
   
@@ -106,10 +106,10 @@ const AppContainer = styled.div`
     height: 600px;
     border-radius: 50%;
     background: ${({ theme }) => theme.gradientYellow};
-    opacity: 0.2;
+    opacity: 0.15;
     filter: blur(120px);
     z-index: -1;
-    animation: ${gradientMove} 25s ease infinite reverse;
+    animation: ${gradientMove} 40s ease infinite reverse;
     will-change: transform;
   }
 `;
@@ -119,10 +119,10 @@ const GradientOrb = styled.div`
   width: 300px;
   height: 300px;
   border-radius: 50%;
-  opacity: 0.15;
+  opacity: 0.1;
   filter: blur(80px);
   z-index: -1;
-  animation: ${pulse} 15s ease infinite alternate;
+  animation: ${pulse} 25s ease infinite alternate;
   will-change: transform, opacity;
   
   &.orb-1 {
@@ -137,37 +137,6 @@ const GradientOrb = styled.div`
     background: ${({ theme }) => theme.gradientCyan};
     animation-delay: 5s;
   }
-  
-  &.orb-3 {
-    top: 20%;
-    left: 25%;
-    width: 250px;
-    height: 250px;
-    background: ${({ theme }) => theme.gradientRed};
-    animation-delay: 7s;
-  }
-  
-  &.orb-4 {
-    bottom: 15%;
-    right: 20%;
-    width: 350px;
-    height: 350px;
-    background: ${({ theme }) => theme.gradientGreen};
-    animation-delay: 3s;
-    opacity: 0.1;
-  }
-  
-  &.orb-5 {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 500px;
-    height: 500px;
-    background: ${({ theme }) => theme.gradientSunset};
-    opacity: 0.05;
-    filter: blur(150px);
-    animation: ${gradientMove} 30s linear infinite;
-  }
 `;
 
 const BackgroundGradient = styled.div`
@@ -178,14 +147,14 @@ const BackgroundGradient = styled.div`
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.03) 0%,
-    rgba(100, 100, 255, 0.05) 25%,
-    rgba(200, 200, 255, 0.03) 50%,
-    rgba(255, 200, 100, 0.05) 75%,
-    rgba(255, 255, 255, 0.03) 100%
+    rgba(255, 255, 255, 0.02) 0%,
+    rgba(100, 100, 255, 0.03) 25%,
+    rgba(200, 200, 255, 0.02) 50%,
+    rgba(255, 200, 100, 0.03) 75%,
+    rgba(255, 255, 255, 0.02) 100%
   );
   background-size: 400% 400%;
-  animation: ${gradientMove} 45s linear infinite;
+  animation: ${gradientMove} 60s linear infinite;
   z-index: -2;
   will-change: background-position;
 `;
@@ -220,9 +189,6 @@ const App: React.FC = () => {
         <BackgroundGradient />
         <GradientOrb className="orb-1" />
         <GradientOrb className="orb-2" />
-        <GradientOrb className="orb-3" />
-        <GradientOrb className="orb-4" />
-        <GradientOrb className="orb-5" />
         <CustomCursor />
         <ScrollIndicator position="top" />
         <ChatWidget 

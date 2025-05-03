@@ -14,40 +14,26 @@ const ripple = keyframes`
   }
 `;
 
-// Water droplet pulsing animation
+// Water droplet pulsing animation - simplified
 const dropletPulse = keyframes`
   0% {
     transform: scale(1);
-    border-radius: 50%;
-  }
-  25% {
-    transform: scale(1.05) translateY(-1px);
-    border-radius: 45% 55% 55% 45% / 55% 45% 55% 45%;
   }
   50% {
-    transform: scale(1) translateY(1px);
-    border-radius: 50% 50% 45% 55% / 55% 55% 45% 45%;
-  }
-  75% {
-    transform: scale(0.98);
-    border-radius: 45% 55% 45% 55% / 45% 45% 55% 55%;
+    transform: scale(1.1);
   }
   100% {
     transform: scale(1);
-    border-radius: 50%;
   }
 `;
 
-// Water wobble animation
+// Simplified wobble animation
 const wobble = keyframes`
   0% {
     border-radius: 50%;
   }
-  33% {
-    border-radius: 55% 45% 55% 45% / 45% 55% 45% 55%;
-  }
-  66% {
-    border-radius: 45% 55% 45% 55% / 55% 45% 55% 45%;
+  50% {
+    border-radius: 45% 55% 55% 45% / 45% 55% 45% 55%;
   }
   100% {
     border-radius: 50%;
@@ -65,7 +51,7 @@ const CursorContainer = styled.div`
   overflow: hidden;
 `;
 
-// Main cursor
+// Main cursor - simplified
 const WaterCursor = styled(motion.div)<{ $isClicking: boolean }>`
   position: fixed;
   width: 22px;
@@ -77,42 +63,23 @@ const WaterCursor = styled(motion.div)<{ $isClicking: boolean }>`
     rgba(0, 180, 255, 0.6) 40%,
     rgba(0, 120, 255, 0.7) 100%
   );
-  box-shadow: 
-    0 0 6px rgba(0, 149, 255, 0.4),
-    inset 0 0 6px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 6px rgba(0, 149, 255, 0.4);
   margin-left: -11px;
   margin-top: -11px;
   pointer-events: none;
   z-index: 99999;
-  animation: ${wobble} 3s infinite ease-in-out;
+  animation: ${wobble} 4s infinite ease-in-out;
   opacity: 0.75;
   
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: inherit;
-    background: radial-gradient(
-      circle at 25% 25%,
-      rgba(255, 255, 255, 0.6) 0%,
-      rgba(255, 255, 255, 0) 50%
-    );
-    opacity: 0.6;
-  }
-  
-  &::after {
-    content: '';
-    position: absolute;
     top: 20%;
     left: 20%;
-    width: 5px;
-    height: 5px;
-    background: rgba(255, 255, 255, 0.8);
+    width: 30%;
+    height: 30%;
     border-radius: 50%;
-    filter: blur(1px);
+    background: rgba(255, 255, 255, 0.6);
   }
   
   ${({ $isClicking }) => $isClicking && css`
@@ -120,17 +87,11 @@ const WaterCursor = styled(motion.div)<{ $isClicking: boolean }>`
     height: 28px;
     margin-left: -14px;
     margin-top: -14px;
-    background: radial-gradient(
-      circle at 35% 35%,
-      rgba(255, 255, 255, 0.3) 0%,
-      rgba(0, 210, 255, 0.65) 40%,
-      rgba(0, 140, 255, 0.75) 100%
-    );
-    animation: ${dropletPulse} 0.6s ease-in-out;
+    animation: ${dropletPulse} 0.6s ease-out;
   `}
 `;
 
-// Splash effect when clicking
+// Simplified splash effect
 const SplashEffect = styled(motion.div)`
   position: absolute;
   width: 25px;
@@ -141,7 +102,7 @@ const SplashEffect = styled(motion.div)`
   pointer-events: none;
 `;
 
-// Small droplets that fly out when clicking
+// Simplified droplet
 const Droplet = styled(motion.div)<{ $size: number; $angle: number }>`
   position: absolute;
   width: ${props => props.$size}px;
@@ -150,22 +111,9 @@ const Droplet = styled(motion.div)<{ $size: number; $angle: number }>`
   background: rgba(0, 175, 255, 0.6);
   transform-origin: center;
   pointer-events: none;
-  box-shadow: 0 0 2px rgba(0, 149, 255, 0.3);
-  opacity: 0.7;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 20%;
-    left: 20%;
-    width: 40%;
-    height: 40%;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
-  }
 `;
 
-// Water trail effect
+// Simplified water trail
 const WaterTrail = styled(motion.div)`
   position: absolute;
   width: 6px;
@@ -173,21 +121,9 @@ const WaterTrail = styled(motion.div)`
   border-radius: 50%;
   background: rgba(0, 175, 255, 0.1);
   pointer-events: none;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle at 30% 30%, 
-      rgba(255, 255, 255, 0.2) 0%, 
-      rgba(255, 255, 255, 0) 70%
-    );
-  }
 `;
 
-// Ripple effect in water
+// Simplified ripple effect
 const RippleEffect = styled(motion.div)`
   position: absolute;
   border-radius: 50%;
@@ -224,17 +160,51 @@ const CustomCursor: React.FC = () => {
   const [splashes, setSplashes] = useState<Splash[]>([]);
   const [isVisible, setIsVisible] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
-  const [velocity, setVelocity] = useState({ x: 0, y: 0 });
   const [lastPosition, setLastPosition] = useState({ x: 0, y: 0 });
 
+  // First check if it's a touch device - if so, don't enable the custom cursor
   useEffect(() => {
-    // For debugging - set to false to force-enable cursor even on touch devices
-    const checkTouchDevice = () => {
-      setIsTouchDevice(false);
+    const detectTouchDevice = () => {
+      return (
+        ('ontouchstart' in window) ||
+        (navigator.maxTouchPoints > 0) ||
+        ((navigator as any).msMaxTouchPoints > 0) ||
+        window.matchMedia('(pointer: coarse)').matches
+      );
     };
     
-    checkTouchDevice();
+    // Check if mobile/touch device
+    setIsTouchDevice(detectTouchDevice());
     
+    // If we're on a touch device, remove the cursor: none CSS
+    if (detectTouchDevice()) {
+      document.documentElement.style.setProperty('--cursor-visibility', 'auto');
+      document.body.classList.remove('custom-cursor');
+      
+      // Remove the !important cursor: none from body
+      const style = document.createElement('style');
+      style.innerHTML = `
+        body, body * {
+          cursor: auto !important;
+        }
+        a, button, input[type="submit"], input[type="button"], 
+        select, [role="button"], .clickable {
+          cursor: pointer !important;
+        }
+      `;
+      document.head.appendChild(style);
+      
+      return () => {
+        document.head.removeChild(style);
+      };
+    } else {
+      // We're on a desktop, add the custom cursor class
+      document.body.classList.add('custom-cursor');
+    }
+  }, []);
+  
+  // Only set up the cursor if we're not on a touch device
+  useEffect(() => {
     if (isTouchDevice) return;
     
     // Show cursor only after it's moved
@@ -245,77 +215,89 @@ const CustomCursor: React.FC = () => {
     
     window.addEventListener('mousemove', handleFirstMove);
     
+    // Use requestAnimationFrame for smoother cursor movement
+    let animationFrameId: number;
+    let lastCallTime = 0;
+    const throttleInterval = 16; // ~60fps
+    
     const handleMouseMove = (e: MouseEvent) => {
-      const newPosition = { x: e.clientX, y: e.clientY };
-      setMousePosition(newPosition);
+      const now = Date.now();
       
-      // Calculate velocity for more realistic water movement
-      const deltaX = newPosition.x - lastPosition.x;
-      const deltaY = newPosition.y - lastPosition.y;
+      // Throttle updates to prevent performance issues
+      if (now - lastCallTime < throttleInterval) return;
+      lastCallTime = now;
       
-      setVelocity({ x: deltaX, y: deltaY });
-      setLastPosition(newPosition);
-      
-      // Create trail based on velocity
-      const speed = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-      
-      if (speed > 5) { // Only create trail when moving fast enough
-        // Create more trail dots when moving faster
-        const trailFrequency = Math.min(0.9, 0.5 + speed / 100);
-        
-        if (Math.random() > trailFrequency) {
-          const newDot = {
-            id: Date.now(),
-            x: e.clientX,
-            y: e.clientY,
-          };
-          
-          setTrail(prev => [...prev, newDot].slice(-5));
-        }
-        
-        // Create ripple effect occasionally during fast movement
-        if (speed > 15 && Math.random() > 0.94) {
-          const newRipple = {
-            id: Date.now(),
-            x: e.clientX,
-            y: e.clientY,
-          };
-          
-          setRipples(prev => [...prev, newRipple].slice(-3));
-        }
+      // Schedule update with requestAnimationFrame
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
       }
+      
+      animationFrameId = requestAnimationFrame(() => {
+        const newPosition = { x: e.clientX, y: e.clientY };
+        setMousePosition(newPosition);
+        
+        // Add to trail (with a low limit to improve performance)
+        const maxTrailLength = 3;
+        setTrail(prevTrail => {
+          const newTrail = [
+            { id: Date.now(), x: e.clientX, y: e.clientY },
+            ...prevTrail,
+          ];
+          
+          if (newTrail.length > maxTrailLength) {
+            return newTrail.slice(0, maxTrailLength);
+          }
+          
+          return newTrail;
+        });
+        
+        setLastPosition(newPosition);
+      });
     };
     
-    const handleMouseDown = (e: MouseEvent) => {
+    const handleMouseDown = () => {
       setIsClicking(true);
       
-      // Create a splash effect on click
-      const splashRipple = {
-        id: Date.now(),
-        x: e.clientX,
-        y: e.clientY,
-      };
-      
-      setRipples(prev => [...prev, splashRipple]);
-      
-      // Create small droplets flying outward
-      const newSplashes: Splash[] = [];
-      const numDroplets = 4 + Math.floor(Math.random() * 4); // Reduce to 4-8 droplets
-      
-      for (let i = 0; i < numDroplets; i++) {
-        const angle = (Math.random() * 360) * (Math.PI / 180);
-        const size = 2 + Math.random() * 3; // Smaller: 2-5px
+      // Only create effects occasionally to reduce performance impact
+      if (Math.random() > 0.7) {
+        const newRipple = {
+          id: Date.now(),
+          x: mousePosition.x,
+          y: mousePosition.y,
+        };
         
-        newSplashes.push({
-          id: Date.now() + i,
-          x: e.clientX,
-          y: e.clientY,
-          angle: angle,
-          size: size
-        });
+        setRipples(prevRipples => [...prevRipples, newRipple]);
+        
+        // Clean up ripple
+        setTimeout(() => {
+          setRipples(prevRipples => 
+            prevRipples.filter(ripple => ripple.id !== newRipple.id)
+          );
+        }, 400);
+        
+        // Add minimal splash effects - just a few droplets
+        const numSplashes = 3;
+        const newSplashes: Splash[] = [];
+        
+        for (let i = 0; i < numSplashes; i++) {
+          newSplashes.push({
+            id: Date.now() + i,
+            x: mousePosition.x,
+            y: mousePosition.y,
+            angle: (i * (360 / numSplashes)) * (Math.PI / 180),
+            size: 3 + Math.random() * 2,
+          });
+        }
+        
+        setSplashes(prevSplashes => [...prevSplashes, ...newSplashes]);
+        
+        // Clean up splashes
+        setTimeout(() => {
+          setSplashes(prevSplashes => 
+            prevSplashes.filter(splash => !newSplashes.some(ns => ns.id === splash.id))
+          );
+        }, 400);
       }
-      
-      setSplashes(prev => [...prev, ...newSplashes].slice(-12)); // Fewer max splashes
     };
     
     const handleMouseUp = () => {
@@ -330,159 +312,100 @@ const CustomCursor: React.FC = () => {
       setIsVisible(true);
     };
     
-    window.addEventListener('mousemove', handleMouseMove);
+    // Add event listeners
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
     document.body.addEventListener('mouseleave', handleMouseLeave);
     document.body.addEventListener('mouseenter', handleMouseEnter);
     
+    // Cleanup function
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('mousemove', handleFirstMove);
       document.body.removeEventListener('mouseleave', handleMouseLeave);
       document.body.removeEventListener('mouseenter', handleMouseEnter);
+      window.removeEventListener('mousemove', handleFirstMove);
+      
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
     };
-  }, [isTouchDevice, lastPosition]);
+  }, [mousePosition, isClicking, isTouchDevice]);
   
-  // Clean up old ripples
-  useEffect(() => {
-    if (ripples.length) {
-      const timer = setTimeout(() => {
-        setRipples(prev => prev.slice(1));
-      }, 800);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [ripples]);
-  
-  // Clean up old splashes
-  useEffect(() => {
-    if (splashes.length) {
-      const timer = setTimeout(() => {
-        setSplashes(prev => prev.slice(Math.max(1, Math.floor(prev.length / 4))));
-      }, 600);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [splashes]);
-  
-  // Don't render on touch devices
-  if (isTouchDevice) return null;
-  
-  // Calculate cursor spring animation based on velocity
-  const springConfig = {
-    type: "spring" as const,
-    damping: 16 + Math.min(8, Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)),
-    stiffness: 400,
-    mass: 0.3
-  };
+  // If on a touch device, don't render the cursor at all
+  if (isTouchDevice) {
+    return null;
+  }
   
   return (
     <CursorContainer>
-      {/* Main water droplet cursor */}
-      <WaterCursor
-        $isClicking={isClicking}
-        animate={{
-          left: mousePosition.x,
-          top: mousePosition.y,
-        }}
-        transition={springConfig}
-      />
-      
-      {/* Water trail */}
+      {/* Main cursor */}
       <AnimatePresence>
-        {trail.map((dot, i) => (
-          <WaterTrail
-            key={dot.id}
-            initial={{ 
-              opacity: 0.5, 
-              scale: 0.7 + (i * 0.1), 
-              left: dot.x, 
-              top: dot.y,
-              borderRadius: '50%'
-            }}
-            animate={{ 
-              opacity: 0,
-              scale: 0.4,
-              borderRadius: '40% 60% 55% 45% / 50% 45% 55% 50%' 
-            }}
-            exit={{ opacity: 0, scale: 0 }}
-            transition={{ duration: 0.8 }}
+        {isVisible && (
+          <WaterCursor
+            $isClicking={isClicking}
+            style={{ top: mousePosition.y, left: mousePosition.x }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.75 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
           />
-        ))}
+        )}
       </AnimatePresence>
       
-      {/* Ripple effects */}
+      {/* Minimal trail effect */}
+      {trail.map((dot, index) => (
+        <WaterTrail
+          key={dot.id}
+          style={{
+            left: dot.x,
+            top: dot.y,
+            opacity: 0.3 - (index * 0.1)
+          }}
+        />
+      ))}
+      
+      {/* Ripple effect for clicks - minimal */}
       <AnimatePresence>
-        {ripples.map((ripple) => (
+        {ripples.map(ripple => (
           <RippleEffect
             key={ripple.id}
-            initial={{ 
-              width: 10, 
-              height: 10, 
-              opacity: 0.8, 
-              left: ripple.x, 
-              top: ripple.y 
-            }}
-            animate={{ 
-              width: 80, 
-              height: 80, 
-              opacity: 0,
-            }}
+            style={{ left: ripple.x, top: ripple.y }}
+            initial={{ width: 0, height: 0, opacity: 0.5 }}
+            animate={{ width: 40, height: 40, opacity: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1, ease: 'easeOut' }}
+            transition={{ duration: 0.4 }}
           />
         ))}
       </AnimatePresence>
       
-      {/* Splash droplets on click */}
+      {/* Splash droplets - minimal */}
       <AnimatePresence>
-        {splashes.map((splash) => (
+        {splashes.map(splash => (
           <Droplet
             key={splash.id}
             $size={splash.size}
             $angle={splash.angle}
+            style={{ left: splash.x, top: splash.y }}
             initial={{ 
-              left: splash.x, 
-              top: splash.y, 
-              opacity: 0.8,
-              scale: 1
+              x: 0, 
+              y: 0, 
+              opacity: 0.6 
             }}
             animate={{ 
-              left: splash.x + Math.cos(splash.angle) * (30 + Math.random() * 40),
-              top: splash.y + Math.sin(splash.angle) * (30 + Math.random() * 40) + 20, // Add gravity
-              opacity: 0,
-              scale: 0.5
+              x: Math.cos(splash.angle) * 20,
+              y: Math.sin(splash.angle) * 20,
+              opacity: 0 
             }}
             exit={{ opacity: 0 }}
             transition={{ 
-              duration: 0.4 + Math.random() * 0.3,
-              ease: [0.2, 0.9, 0.4, 1] // Custom ease for realistic physics
+              duration: 0.4,
+              ease: "easeOut"
             }}
           />
         ))}
-      </AnimatePresence>
-      
-      {/* Large splash on click */}
-      <AnimatePresence>
-        {isClicking && (
-          <SplashEffect
-            initial={{ 
-              opacity: 0.8, 
-              scale: 0.3, 
-              left: mousePosition.x, 
-              top: mousePosition.y 
-            }}
-            animate={{ 
-              opacity: 0, 
-              scale: 1.5
-            }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          />
-        )}
       </AnimatePresence>
     </CursorContainer>
   );

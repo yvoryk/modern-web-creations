@@ -1,12 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
   :root {
     --transition-speed: 0.3s;
     --border-radius-sm: 4px;
@@ -20,6 +14,13 @@ const GlobalStyle = createGlobalStyle`
     --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --ease-out: cubic-bezier(0, 0, 0.2, 1);
     --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --cursor-visibility: auto;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 
   html {
@@ -35,20 +36,27 @@ const GlobalStyle = createGlobalStyle`
     color: ${({ theme }) => theme.text};
     background-color: ${({ theme }) => theme.background};
     transition: all var(--transition-speed) var(--ease-out);
-    cursor: none !important; /* Hide default cursor with !important */
-    /* add global style for all elements to ensure cursor hiding */
+    cursor: var(--cursor-visibility) !important;
+  }
+
+  /* Only apply cursor: none when the custom-cursor class is present */
+  body.custom-cursor {
+    cursor: none !important;
+    
+    /* apply to all elements only when custom cursor is enabled */
     * {
+      cursor: none !important;
+    }
+    
+    /* Special cursor handling for interactive elements */
+    a, button, input[type="submit"], input[type="button"], 
+    select, [role="button"], .clickable, 
+    input, textarea, label, [tabindex], [onclick] {
       cursor: none !important;
     }
   }
 
-  /* Apply cursor: none to all interactive elements with !important to override browser defaults */
-  a, button, input[type="submit"], input[type="button"], 
-  select, [role="button"], .clickable, 
-  input, textarea, label, [tabindex], [onclick] {
-    cursor: none !important;
-  }
-
+  /* Default styles for elements when custom cursor is disabled */
   a {
     text-decoration: none;
     color: ${({ theme }) => theme.primary};
@@ -131,6 +139,16 @@ const GlobalStyle = createGlobalStyle`
     
     &:hover {
       background: ${({ theme }) => theme.primaryHover};
+    }
+  }
+
+  /* Optimize animations on low-power devices */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 
