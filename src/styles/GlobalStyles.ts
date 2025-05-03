@@ -379,6 +379,44 @@ const GlobalStyles = createGlobalStyle`
       backdrop-filter: blur(5px); /* Reduced blur for better performance */
     }
   }
+
+  /* Special handling for Instagram in-app browser */
+  .instagram-browser {
+    /* Force hardware acceleration more aggressively */
+    * {
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    
+    /* Reduce animation complexity */
+    .fade-in, .slide-up, .slide-left, .slide-right {
+      animation-duration: 0.2s !important;
+      animation-timing-function: ease-out !important;
+    }
+    
+    /* Disable gradient animations completely */
+    .gradient-text, .gradient-text-blue, .gradient-text-purple, 
+    .gradient-text-rainbow, .gradient-text-sunset, .gradient-text-neon,
+    .gradient-bg-blue, .gradient-bg-yellow, .gradient-bg-rainbow,
+    .gradient-bg-purple, .gradient-bg-cyan, .gradient-bg-sunset,
+    .gradient-bg-pastel, .gradient-bg-ocean, .gradient-bg-neon {
+      animation: none !important;
+      background-size: 100% 100% !important;
+      background-position: 0% 0% !important;
+    }
+    
+    /* Simplify box-shadows */
+    * {
+      box-shadow: none !important;
+    }
+    
+    /* Disable backdrop filters */
+    .glass, .dark-glass {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+  }
 `;
 
 export default GlobalStyles; 

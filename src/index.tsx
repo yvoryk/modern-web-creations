@@ -1,48 +1,50 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
 import App from './App';
+import { BrowserRouter as Router } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import { ThemeProvider } from './context/ThemeContext';
+import './index.css';
 
-// Performance monitoring function
-const sendToAnalytics = (metric: any) => {
-  // In production, you would send metrics to your analytics service
-  console.log(metric);
-  
-  // Send to Google Analytics if available
-  if (window.gtag) {
-    window.gtag('event', 'web-vitals', {
-      event_category: 'Web Vitals',
-      event_label: metric.name,
-      value: Math.round(metric.value),
-      non_interaction: true,
-    });
+// Fix for Instagram in-app browser
+// This will force a small delay before rendering to prevent flickering
+const renderApp = () => {
+  const rootElement = document.getElementById('root');
+  if (!rootElement) {
+    throw new Error('Failed to find the root element');
   }
+  
+  const root = ReactDOM.createRoot(rootElement);
+  
+  root.render(
+    <React.StrictMode>
+      <Router>
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
+      </Router>
+    </React.StrictMode>
+  );
 };
 
-// Root element
-const rootElement = document.getElementById('root');
-
-if (!rootElement) {
-  throw new Error('Failed to find the root element');
+// Check if running in Instagram browser and apply special handling
+const isInstagramBrowser = /Instagram/.test(navigator.userAgent);
+if (isInstagramBrowser) {
+  // Add Instagram-specific class to body
+  document.body.classList.add('instagram-browser');
+  
+  // Small delay for Instagram browser to stabilize
+  setTimeout(renderApp, 50);
+} else {
+  // Normal rendering for other browsers
+  renderApp();
 }
 
-const root = ReactDOM.createRoot(rootElement);
-
-// Render application with StrictMode for better development experience
-root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+// Measure performance but don't log to console in production
+reportWebVitals(process.env.NODE_ENV === 'development' 
+  ? (metric) => console.log(metric) 
+  : undefined
 );
-
-// Measure and report performance metrics
-reportWebVitals(sendToAnalytics);
 
 // Add window type for gtag
 declare global {

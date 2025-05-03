@@ -198,13 +198,8 @@ const Copyright = styled.div`
 const Footer: React.FC = () => {
   const navigate = useNavigate();
   
-  // Function to handle mobile link clicks that only activates when clicking on the text
-  const handleMobileLinkClick = (
-    e: React.MouseEvent | React.TouchEvent,
-    path: string
-  ) => {
-    e.preventDefault(); // Prevent default Link behavior
-    // Navigate using React Router instead of window.location
+  // Simplified click handler for mobile - no preventDefault to avoid conflicts
+  const handleMobileLinkClick = (path: string) => {
     navigate(path);
   };
 
@@ -241,50 +236,45 @@ const Footer: React.FC = () => {
           <FooterHeading>Quick Links</FooterHeading>
           
           <FooterLinkWrapper>
-            <TouchBarrier />
             <FooterLink 
               to="/" 
-              onClick={(e) => handleMobileLinkClick(e, "/")}
+              onClick={() => handleMobileLinkClick("/")}
             >
               <LinkText className="link-text">Home</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
           </FooterLinkWrapper>
           
           <FooterLinkWrapper>
-            <TouchBarrier />
             <FooterLink 
               to="/services" 
-              onClick={(e) => handleMobileLinkClick(e, "/services")}
+              onClick={() => handleMobileLinkClick("/services")}
             >
               <LinkText className="link-text">Services</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
           </FooterLinkWrapper>
           
           <FooterLinkWrapper>
-            <TouchBarrier />
             <FooterLink 
               to="/portfolio" 
-              onClick={(e) => handleMobileLinkClick(e, "/portfolio")}
+              onClick={() => handleMobileLinkClick("/portfolio")}
             >
               <LinkText className="link-text">Portfolio</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
           </FooterLinkWrapper>
           
           <FooterLinkWrapper>
-            <TouchBarrier />
             <FooterLink 
               to="/about" 
-              onClick={(e) => handleMobileLinkClick(e, "/about")}
+              onClick={() => handleMobileLinkClick("/about")}
             >
               <LinkText className="link-text">About Us</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
           </FooterLinkWrapper>
           
           <FooterLinkWrapper>
-            <TouchBarrier />
             <FooterLink 
               to="/contact" 
-              onClick={(e) => handleMobileLinkClick(e, "/contact")}
+              onClick={() => handleMobileLinkClick("/contact")}
             >
               <LinkText className="link-text">Contact</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
@@ -295,50 +285,45 @@ const Footer: React.FC = () => {
           <FooterHeading>Services</FooterHeading>
           
           <FooterLinkWrapper>
-            <TouchBarrier />
             <FooterLink 
               to="/services" 
-              onClick={(e) => handleMobileLinkClick(e, "/services")}
+              onClick={() => handleMobileLinkClick("/services")}
             >
               <LinkText className="link-text">Website Design</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
           </FooterLinkWrapper>
           
           <FooterLinkWrapper>
-            <TouchBarrier />
             <FooterLink 
               to="/services" 
-              onClick={(e) => handleMobileLinkClick(e, "/services")}
+              onClick={() => handleMobileLinkClick("/services")}
             >
               <LinkText className="link-text">Website Development</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
           </FooterLinkWrapper>
           
           <FooterLinkWrapper>
-            <TouchBarrier />
             <FooterLink 
               to="/services" 
-              onClick={(e) => handleMobileLinkClick(e, "/services")}
+              onClick={() => handleMobileLinkClick("/services")}
             >
               <LinkText className="link-text">E-Commerce Solutions</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
           </FooterLinkWrapper>
           
           <FooterLinkWrapper>
-            <TouchBarrier />
             <FooterLink 
               to="/services" 
-              onClick={(e) => handleMobileLinkClick(e, "/services")}
+              onClick={() => handleMobileLinkClick("/services")}
             >
               <LinkText className="link-text">Website Redesign</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
           </FooterLinkWrapper>
           
           <FooterLinkWrapper>
-            <TouchBarrier />
             <FooterLink 
               to="/services" 
-              onClick={(e) => handleMobileLinkClick(e, "/services")}
+              onClick={() => handleMobileLinkClick("/services")}
             >
               <LinkText className="link-text">SEO Optimization</LinkText> <FontAwesomeIcon icon={faArrowRight} />
             </FooterLink>
