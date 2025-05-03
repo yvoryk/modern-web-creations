@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 interface PageTransitionProps {
@@ -8,7 +8,7 @@ interface PageTransitionProps {
 const pageVariants = {
   initial: {
     opacity: 0,
-    y: 10
+    y: 5
   },
   animate: {
     opacity: 1,
@@ -16,17 +16,25 @@ const pageVariants = {
   },
   exit: {
     opacity: 0,
-    y: -10
+    y: -5
   }
 };
 
 const pageTransition = {
   type: 'tween',
-  ease: 'anticipate',
-  duration: 0.4
+  ease: 'easeInOut',
+  duration: 0.2
 };
 
 const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
+  useEffect(() => {
+    const scrollY = window.scrollY;
+    
+    return () => {
+      window.scrollTo(0, scrollY);
+    };
+  }, []);
+
   return (
     <motion.div
       initial="initial"

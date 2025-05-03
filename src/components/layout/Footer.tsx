@@ -186,35 +186,35 @@ const Footer: React.FC = () => {
           <FooterLink to="/">
             Home <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/services">
+          <FooterLink to="/services" onClick={(e) => e.currentTarget.click()}>
             Services <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/portfolio">
+          <FooterLink to="/portfolio" onClick={(e) => e.currentTarget.click()}>
             Portfolio <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/about">
+          <FooterLink to="/about" onClick={(e) => e.currentTarget.click()}>
             About Us <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/contact">
+          <FooterLink to="/contact" onClick={(e) => e.currentTarget.click()}>
             Contact <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
         </FooterColumn>
         
         <FooterColumn>
           <FooterHeading>Services</FooterHeading>
-          <FooterLink to="/services">
+          <FooterLink to="/services" onClick={(e) => e.currentTarget.click()}>
             Website Design <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/services">
+          <FooterLink to="/services" onClick={(e) => e.currentTarget.click()}>
             Website Development <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/services">
+          <FooterLink to="/services" onClick={(e) => e.currentTarget.click()}>
             E-Commerce Solutions <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/services">
+          <FooterLink to="/services" onClick={(e) => e.currentTarget.click()}>
             Website Redesign <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
-          <FooterLink to="/services">
+          <FooterLink to="/services" onClick={(e) => e.currentTarget.click()}>
             SEO Optimization <FontAwesomeIcon icon={faArrowRight} />
           </FooterLink>
         </FooterColumn>

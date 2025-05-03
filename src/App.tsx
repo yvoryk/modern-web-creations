@@ -162,22 +162,37 @@ const BackgroundGradient = styled.div`
 const App: React.FC = () => {
   useEffect(() => {
     // Add smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', (e: Event) => {
-        e.preventDefault();
-        const target = e.currentTarget as HTMLAnchorElement;
-        const href = target.getAttribute('href');
-        if (href) {
-          document.querySelector(href)?.scrollIntoView({
-            behavior: 'smooth'
-          });
+    const handleAnchorClick = (e: Event) => {
+      e.preventDefault();
+      const target = e.currentTarget as HTMLAnchorElement;
+      const href = target.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        const element = document.querySelector(href);
+        if (element) {
+          // Add small delay for mobile devices to ensure menu closes first
+          setTimeout(() => {
+            element.scrollIntoView({
+              behavior: 'smooth'
+            });
+          }, 50);
         }
-      });
+      }
+    };
+
+    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+    anchorLinks.forEach(anchor => {
+      anchor.addEventListener('click', handleAnchorClick);
+    });
+
+    // Also handle touch events for better mobile response
+    anchorLinks.forEach(anchor => {
+      anchor.addEventListener('touchend', handleAnchorClick);
     });
 
     return () => {
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.removeEventListener('click', () => {});
+      anchorLinks.forEach(anchor => {
+        anchor.removeEventListener('click', handleAnchorClick);
+        anchor.removeEventListener('touchend', handleAnchorClick);
       });
     };
   }, []);
