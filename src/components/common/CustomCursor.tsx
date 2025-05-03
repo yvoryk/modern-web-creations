@@ -77,7 +77,7 @@ const CustomCursor: React.FC<CursorProps> = ({
   
   // Theme context for dynamic theming
   const theme = useContext(ThemeContext) || { primary: '#0095ff' };
-  
+
   useEffect(() => {
     // Very thorough touch device detection
     const detectTouchDevice = () => {

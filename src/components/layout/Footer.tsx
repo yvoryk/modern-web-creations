@@ -90,12 +90,27 @@ const ContactItem = styled.div`
   }
 `;
 
-const FooterLink = styled(Link)`
+// Wrapper div for the link to ensure proper spacing
+const FooterLinkWrapper = styled.div`
   margin-bottom: 0.8rem;
-  color: ${({ theme }) => theme.textLight};
   display: flex;
+  position: relative;
+  padding: 0.2rem 0;
+`;
+
+// The actual link component with modified behavior
+const FooterLink = styled(Link)`
+  color: ${({ theme }) => theme.textLight};
+  display: inline-flex;
   align-items: center;
   transition: all 0.3s ease;
+  position: relative;
+  
+  @media (max-width: 768px) {
+    /* Remove extra padding to make tap target more precise */
+    padding: 0.2rem 0;
+    display: inline;
+  }
   
   svg {
     opacity: 0;
@@ -111,6 +126,35 @@ const FooterLink = styled(Link)`
       opacity: 1;
       margin-left: 8px;
     }
+  }
+`;
+
+// Invisible touch area that prevents accidental taps (mobile only)
+const TouchBarrier = styled.div`
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+  }
+`;
+
+// Span that wraps the text content and is the actual clickable part
+const LinkText = styled.span`
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+  
+  @media (max-width: 768px) {
+    /* Slight padding to create a better touch target for the text only */
+    padding: 0.4rem 0.1rem;
+    /* Apply a safe touch area around the text only */
+    display: inline-block;
   }
 `;
 
@@ -152,6 +196,27 @@ const Copyright = styled.div`
 `;
 
 const Footer: React.FC = () => {
+  // Function to handle mobile link clicks that only activates when clicking on the text
+  const handleMobileLinkClick = (
+    e: React.MouseEvent | React.TouchEvent,
+    path: string
+  ) => {
+    // Check if the click event target is exactly the linkText or its children
+    const target = e.target as HTMLElement;
+    const isLinkTextClicked = 
+      target.classList.contains('link-text') || 
+      target.closest('.link-text');
+    
+    if (!isLinkTextClicked) {
+      // Prevent navigation if clicked outside the text
+      e.preventDefault();
+      return;
+    }
+    
+    // Otherwise, navigate to the path
+    window.location.href = path;
+  };
+
   return (
     <FooterContainer>
       <FooterContent>
@@ -183,40 +248,120 @@ const Footer: React.FC = () => {
         
         <FooterColumn>
           <FooterHeading>Quick Links</FooterHeading>
-          <FooterLink to="/" style={{ touchAction: 'manipulation' }}>
-            Home <FontAwesomeIcon icon={faArrowRight} />
-          </FooterLink>
-          <FooterLink to="/services" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/services'; }}>
-            Services <FontAwesomeIcon icon={faArrowRight} />
-          </FooterLink>
-          <FooterLink to="/portfolio" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/portfolio'; }}>
-            Portfolio <FontAwesomeIcon icon={faArrowRight} />
-          </FooterLink>
-          <FooterLink to="/about" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/about'; }}>
-            About Us <FontAwesomeIcon icon={faArrowRight} />
-          </FooterLink>
-          <FooterLink to="/contact" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/contact'; }}>
-            Contact <FontAwesomeIcon icon={faArrowRight} />
-          </FooterLink>
+          
+          <FooterLinkWrapper>
+            <TouchBarrier />
+            <FooterLink 
+              to="/" 
+              onClick={(e) => handleMobileLinkClick(e, "/")}
+              style={{ touchAction: 'manipulation' }}
+            >
+              <LinkText className="link-text">Home</LinkText> <FontAwesomeIcon icon={faArrowRight} />
+            </FooterLink>
+          </FooterLinkWrapper>
+          
+          <FooterLinkWrapper>
+            <TouchBarrier />
+            <FooterLink 
+              to="/services" 
+              onClick={(e) => handleMobileLinkClick(e, "/services")}
+              style={{ touchAction: 'manipulation' }}
+            >
+              <LinkText className="link-text">Services</LinkText> <FontAwesomeIcon icon={faArrowRight} />
+            </FooterLink>
+          </FooterLinkWrapper>
+          
+          <FooterLinkWrapper>
+            <TouchBarrier />
+            <FooterLink 
+              to="/portfolio" 
+              onClick={(e) => handleMobileLinkClick(e, "/portfolio")}
+              style={{ touchAction: 'manipulation' }}
+            >
+              <LinkText className="link-text">Portfolio</LinkText> <FontAwesomeIcon icon={faArrowRight} />
+            </FooterLink>
+          </FooterLinkWrapper>
+          
+          <FooterLinkWrapper>
+            <TouchBarrier />
+            <FooterLink 
+              to="/about" 
+              onClick={(e) => handleMobileLinkClick(e, "/about")}
+              style={{ touchAction: 'manipulation' }}
+            >
+              <LinkText className="link-text">About Us</LinkText> <FontAwesomeIcon icon={faArrowRight} />
+            </FooterLink>
+          </FooterLinkWrapper>
+          
+          <FooterLinkWrapper>
+            <TouchBarrier />
+            <FooterLink 
+              to="/contact" 
+              onClick={(e) => handleMobileLinkClick(e, "/contact")}
+              style={{ touchAction: 'manipulation' }}
+            >
+              <LinkText className="link-text">Contact</LinkText> <FontAwesomeIcon icon={faArrowRight} />
+            </FooterLink>
+          </FooterLinkWrapper>
         </FooterColumn>
         
         <FooterColumn>
           <FooterHeading>Services</FooterHeading>
-          <FooterLink to="/services" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/services'; }}>
-            Website Design <FontAwesomeIcon icon={faArrowRight} />
-          </FooterLink>
-          <FooterLink to="/services" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/services'; }}>
-            Website Development <FontAwesomeIcon icon={faArrowRight} />
-          </FooterLink>
-          <FooterLink to="/services" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/services'; }}>
-            E-Commerce Solutions <FontAwesomeIcon icon={faArrowRight} />
-          </FooterLink>
-          <FooterLink to="/services" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/services'; }}>
-            Website Redesign <FontAwesomeIcon icon={faArrowRight} />
-          </FooterLink>
-          <FooterLink to="/services" style={{ touchAction: 'manipulation' }} onClick={() => {}} onTouchEnd={(e) => { e.preventDefault(); window.location.href = '/services'; }}>
-            SEO Optimization <FontAwesomeIcon icon={faArrowRight} />
-          </FooterLink>
+          
+          <FooterLinkWrapper>
+            <TouchBarrier />
+            <FooterLink 
+              to="/services" 
+              onClick={(e) => handleMobileLinkClick(e, "/services")}
+              style={{ touchAction: 'manipulation' }}
+            >
+              <LinkText className="link-text">Website Design</LinkText> <FontAwesomeIcon icon={faArrowRight} />
+            </FooterLink>
+          </FooterLinkWrapper>
+          
+          <FooterLinkWrapper>
+            <TouchBarrier />
+            <FooterLink 
+              to="/services" 
+              onClick={(e) => handleMobileLinkClick(e, "/services")}
+              style={{ touchAction: 'manipulation' }}
+            >
+              <LinkText className="link-text">Website Development</LinkText> <FontAwesomeIcon icon={faArrowRight} />
+            </FooterLink>
+          </FooterLinkWrapper>
+          
+          <FooterLinkWrapper>
+            <TouchBarrier />
+            <FooterLink 
+              to="/services" 
+              onClick={(e) => handleMobileLinkClick(e, "/services")}
+              style={{ touchAction: 'manipulation' }}
+            >
+              <LinkText className="link-text">E-Commerce Solutions</LinkText> <FontAwesomeIcon icon={faArrowRight} />
+            </FooterLink>
+          </FooterLinkWrapper>
+          
+          <FooterLinkWrapper>
+            <TouchBarrier />
+            <FooterLink 
+              to="/services" 
+              onClick={(e) => handleMobileLinkClick(e, "/services")}
+              style={{ touchAction: 'manipulation' }}
+            >
+              <LinkText className="link-text">Website Redesign</LinkText> <FontAwesomeIcon icon={faArrowRight} />
+            </FooterLink>
+          </FooterLinkWrapper>
+          
+          <FooterLinkWrapper>
+            <TouchBarrier />
+            <FooterLink 
+              to="/services" 
+              onClick={(e) => handleMobileLinkClick(e, "/services")}
+              style={{ touchAction: 'manipulation' }}
+            >
+              <LinkText className="link-text">SEO Optimization</LinkText> <FontAwesomeIcon icon={faArrowRight} />
+            </FooterLink>
+          </FooterLinkWrapper>
         </FooterColumn>
         
         <FooterColumn>
